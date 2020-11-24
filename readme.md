@@ -12,3 +12,22 @@ Powerful utilities for plugin makers
 # How to use
 Simply create a new instance of AUtil and pass your main class on startup.
 From there on out its as simple as using the various static utils!
+
+# Maven integration
+
+C'mon, you should know what to do with these
+
+```
+    <repository>
+        <id>repsy</id>
+        <name>My Private Maven Repositoty on Repsy</name>
+        <url>https://repo.repsy.io/mvn/{MY REPSY USERNAME}/{MY REPOSITORY NAME}</url>
+    </repository>
+
+    <dependency>
+        <groupId>com.elytraforce</groupId>
+        <artifactId>aUtils</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </dependency>
+
+```
