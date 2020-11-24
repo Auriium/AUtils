@@ -1,6 +1,6 @@
 package com.elytraforce.aUtils.chat;
 
-import com.elytraforce.aUtils.Main;
+import com.elytraforce.aUtils.AUtil;
 import com.elytraforce.aUtils.reflection.AReflection;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -192,7 +192,7 @@ public class ActionBar {
                 sendActionBar(player, message);
             }
             // Re-sends the messages every 2 seconds so it doesn't go away from the player's screen.
-        }.runTaskTimerAsynchronously(Main.getPlugin(), 0L, 40L);
+        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 40L);
     }
 
     /**
@@ -221,7 +221,7 @@ public class ActionBar {
                 }
             }
             // Re-sends the messages every 2 seconds so it doesn't go away from the player's screen.
-        }.runTaskTimerAsynchronously(Main.getPlugin(), 0L, 40L);
+        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 40L);
     }
 
     /**
@@ -244,6 +244,6 @@ public class ActionBar {
                 repeater -= 40L;
                 if (repeater - 40L < -20L) cancel();
             }
-        }.runTaskTimerAsynchronously(Main.getPlugin(), 0L, 40L);
+        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 40L);
     }
 }

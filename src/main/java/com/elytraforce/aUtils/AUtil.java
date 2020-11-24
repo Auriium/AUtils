@@ -2,12 +2,12 @@ package com.elytraforce.aUtils;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main {
+public class AUtil {
 
     private static JavaPlugin instance;
-    private static Main utilInstance;
+    private static AUtil utilInstance;
 
-    public Main(JavaPlugin plugin) {
+    public AUtil(JavaPlugin plugin) {
         instance = plugin;
         utilInstance = this;
     }
@@ -16,7 +16,7 @@ public class Main {
         return instance;
     }
 
-    public static Main getUtils() {
+    public static AUtil getUtils() {
         return utilInstance;
     }
 

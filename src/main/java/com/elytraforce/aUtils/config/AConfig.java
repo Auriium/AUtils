@@ -1,7 +1,7 @@
 package com.elytraforce.aUtils.config;
 
 import com.elytraforce.aUtils.ALogger;
-import com.elytraforce.aUtils.Main;
+import com.elytraforce.aUtils.AUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -19,7 +19,7 @@ public abstract class AConfig extends AbstractFile{
     private static YamlConfiguration config;
 
     public AConfig create() {
-        file = new File(Main.getPlugin().getDataFolder(), this.filePosition());
+        file = new File(AUtil.getPlugin().getDataFolder(), this.filePosition());
         config = new YamlConfiguration();
 
         if (!file.exists()) {
