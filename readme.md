@@ -16,7 +16,7 @@ From there on out its as simple as using the various static utils!
 # Usage
 Shade and relocate AUtils, then
 
-`new AUtils(your main class)` on startup. You don't need to cache it if you shaded and relocated.
+`AUtils.newUtil().using(your plugin)` on startup. You don't need to cache it if you shaded and relocated.
 
 Congrats! You can now make static calls to every single method!
 
