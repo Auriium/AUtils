@@ -14,17 +14,8 @@ public class AUtil {
     private static AUtil utilInstance;
     private boolean isDebug;
 
-    private AUtil() {
-        utilInstance = this;
-    }
-
-    public static AUtil newUtil() {
-        return new AUtil();
-    }
-
-    public AUtil withPlugin(JavaPlugin instance) {
-        AUtil.instance = instance;
-        return this;
+    private AUtil(JavaPlugin instance) {
+        utilInstance = this; AUtil.instance = instance;
     }
 
     public AUtil withDebugLogging() {
