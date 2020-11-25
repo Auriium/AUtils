@@ -147,86 +147,68 @@ public class Database {
         }
     }
 
-    public ResultSet query(final String sql, final Object[] toSet) throws SQLException {
-        try (final Connection connection = this.source.getConnection()) {
-            this.debug("(Query) Successfully got a new connection from hikari: " + connection.toString() + ", catalog: " + connection.getCatalog());
-            try (final PreparedStatement statement = connection.prepareStatement(sql)) {
-                this.debug("(Query) Successfully created a PreparedStatement with the following: " + sql);
+    public ResultSet query(String sql, Object[] toSet) throws SQLException {
+        try (Connection connection = source.getConnection()) {
+            debug("(Query) Successfully got a new connection from hikari: " + connection.toString() + ", catalog: " + connection.getCatalog());
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                debug("(Query) Successfully created a PreparedStatement with the following: " + sql);
                 if (toSet != null) {
-                    for (int i = 0; i < toSet.length; ++i) {
+                    for (int i = 0; i < toSet.length; i++) {
                         statement.setObject(i + 1, toSet[i]);
                     }
                 }
-                this.debug("(Query) Successfully set objects. Executing the following: " + statement.toString().substring(statement.toString().indexOf(45) + 1));
-                return statement.executeQuery();
+                debug("(Query) Successfully set objects. Executing the following: " + statement.toString().substring(statement.toString().indexOf('-') + 1));
+                ResultSet result = statement.executeQuery();
+                return result;
             }
         }
     }
 
-    public void queryAsync(final String sql, final Object[] toSet, final Callback<ResultSet> callback) {
-        this.asyncQueue.execute(() -> {
-            Connection connection;
-            PreparedStatement statement;
-            int i;
-            ResultSet result;
-            RunnableFuture<Void> task;
-            Exception e2;
-            try {
-                connection = this.source.getConnection();
-                try {
-                    this.debug("(Query) Successfully got a new connection from hikari: " + connection.toString() + ", catalog: " + connection.getCatalog());
-                    statement = connection.prepareStatement(sql);
-                    try {
-                        this.debug("(Query) Successfully created a PreparedStatement with the following: " + sql);
-                        if (toSet != null) {
-                            for (i = 0; i < toSet.length; ++i) {
-                                statement.setObject(i + 1, toSet[i]);
-                            }
+    public void queryAsync(String sql, Object[] toSet, Callback<ResultSet> callback) {
+        asyncQueue.execute(() -> {
+            try (Connection connection = source.getConnection()) {
+                debug("(Query) Successfully got a new connection from hikari: " + connection.toString() + ", catalog: " + connection.getCatalog());
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    debug("(Query) Successfully created a PreparedStatement with the following: " + sql);
+                    if (toSet != null) {
+                        for (int i = 0; i < toSet.length; i++) {
+                            statement.setObject(i + 1, toSet[i]);
                         }
-                        this.debug("(Query) Successfully set objects. Executing the following: " + statement.toString().substring(statement.toString().indexOf(45) + 1));
-                        result = statement.executeQuery();
-                        if (!this.shuttingDown) {
-                            task = new FutureTask<>(() -> {
-                                try {
-                                    callback.callback(result);
-                                } catch (SQLException e) {
-                                    this.logger.error("There was an error while reading the query result!");
-                                    e.printStackTrace();
-                                }
-                                return null;
-                            });
-                            Bukkit.getScheduler().runTask(this.using, task);
+                    }
+                    debug("(Query) Successfully set objects. Executing the following: " + statement.toString().substring(statement.toString().indexOf('-') + 1));
+                    ResultSet result = statement.executeQuery();
+                    if (!shuttingDown) {
+                        RunnableFuture<Void> task = new FutureTask<>(() -> {
                             try {
-                                task.get();
+                                callback.callback(result);
+                            } catch (SQLException e) {
+                                logger.error("There was an error while reading the query result!");
+                                e.printStackTrace();
                             }
-                            catch (InterruptedException | ExecutionException ex2) {
-                                e2 = ex2;
-                                this.logger.error("There was an error while waiting for the query to complete!");
-                                e2.printStackTrace();
-                            }
+                            return null;
+                        });
+                        Bukkit.getScheduler().runTask(using, task);
+                        try {
+                            task.get();
+                        } catch (InterruptedException | ExecutionException e) {
+                            logger.error("There was an error while waiting for the query callback to complete!");
+                            e.printStackTrace();
+                        }
+                        result.close();
+                    } else {
+                        try {
+                            logger.warn("SQL statement executed asynchronously during shutdown, so the synchronous callback was not run. This occurred during a query, so data will not be loaded.");
                             result.close();
-                        }
-                        else {
-                            try {
-                                this.logger.warn("SQL statement executed asynchronously during shutdown, so the synchronous callback was not run. This occurred on a query, so data will not be loaded.");
-                                result.close();
-                            }
-                            catch (SQLException ignored) {}
-                        }
-                    } finally {
-                        if (statement != null) {
-                                statement.close();
-                        }
+                        } catch (SQLException ignored) {}
                     }
-                } finally {
-                    if (connection != null) {
-                            connection.close();
-                    }
+                } catch (SQLException e) {
+                    logger.error("There was an error when querying the database!");
+                    e.printStackTrace();
                 }
-            }
-            catch (SQLException e3) {
-                this.logger.error("There was an error when querying the database!");
-                e3.printStackTrace();
+            } catch (SQLException e) {
+                logger.error("There was an error when querying the database!");
+                logger.error("Error occurred on the following SQL statement: " + sql);
+                e.printStackTrace();
             }
         });
     }
@@ -245,38 +227,31 @@ public class Database {
         }
     }
 
-    public void updateAsync(final String sql, final Object[] toSet, final Callback<Integer> callback) {
-        this.asyncQueue.execute(() -> {
-            int toReturn;
-            RunnableFuture<Void> task;
-            Exception e;
+    public void updateAsync(String sql, Object[] toSet, Callback<Integer> callback) {
+        asyncQueue.execute(() -> {
             try {
-                toReturn = this.update(sql, toSet);
-                if (!this.shuttingDown) {
-                    task = new FutureTask<>(() -> {
+                int toReturn = update(sql, toSet);
+                if (!shuttingDown) {
+                    RunnableFuture<Void> task = new FutureTask<>(() -> {
                         try {
                             callback.callback(toReturn);
-                        } catch (SQLException ignored) {
-                        }
+                        } catch (SQLException ignored) {}
                         return null;
                     });
-                    Bukkit.getScheduler().runTask(this.using, task);
+                    Bukkit.getScheduler().runTask(using, task);
                     try {
                         task.get();
-                    }
-                    catch (InterruptedException | ExecutionException ex3) {
-                        e = ex3;
-                        this.logger.error("There was an error while waiting for the update to complete!");
+                    } catch (InterruptedException | ExecutionException e) {
+                        logger.error("There was an error while waiting for the update callback to complete!");
                         e.printStackTrace();
                     }
+                } else {
+                    logger.warn("SQL statement executed asynchronously during shutdown, so the synchronous callback was not run. This occurred during an update, so no data loss has occurred.");
                 }
-                else {
-                    this.logger.warn("SQL statement executed asynchronously during shutdown, so the synchronous callback was not run. This occurred during an update, so no data loss has occurred.");
-                }
-            }
-            catch (SQLException e2) {
-                this.logger.error("There was an error when updating the database!");
-                e2.printStackTrace();
+            } catch (SQLException e) {
+                logger.error("There was an error when updating the database!");
+                logger.error("Error occurred on the following SQL statement: " + sql);
+                e.printStackTrace();
             }
         });
     }

@@ -16,4 +16,10 @@ public class ALogger {
         AUtil.getPlugin().getLogger().log(Level.SEVERE, text);
     }
 
+    public static void logDebug(String text) {
+        if (AUtil.getUtils().isDebug()) {
+            AUtil.getPlugin().getLogger().log(Level.INFO, "(Debug) " + text);
+        }
+    }
+
 }
