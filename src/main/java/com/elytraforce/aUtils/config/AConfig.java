@@ -1,7 +1,7 @@
 package com.elytraforce.aUtils.config;
 
-import com.elytraforce.aUtils.ALogger;
-import com.elytraforce.aUtils.AUtil;
+import com.elytraforce.aUtils.logger.ALogger;
+import com.elytraforce.aUtils.util.AUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -18,7 +18,8 @@ public abstract class AConfig extends AbstractFile{
     private static File file;
     private static YamlConfiguration config;
 
-    public AConfig create() {
+    @Override
+    public <T extends AbstractFile> AConfig create() {
         file = new File(AUtil.getPlugin().getDataFolder(), this.filePosition());
         config = new YamlConfiguration();
 
@@ -35,7 +36,8 @@ public abstract class AConfig extends AbstractFile{
         return this;
     }
 
-    public AConfig create(File file) {
+    @Override
+    public <T extends AbstractFile> AConfig create(File file) {
         AConfig.file = file;
         config = new YamlConfiguration();
 
@@ -51,7 +53,8 @@ public abstract class AConfig extends AbstractFile{
         return this;
     }
 
-    public AConfig load() {
+    @Override
+    public <T extends AbstractFile> AConfig load() {
         try {
             config.load(file);
         } catch (Exception e) {
@@ -59,6 +62,33 @@ public abstract class AConfig extends AbstractFile{
         }
 
         Class<? extends AConfig> cls = getClass();
+
+        for(Field f : cls.getFields())
+        {
+            if(f.isAnnotationPresent(ConfigField.class))
+            {
+                String target = "";
+                ConfigField cf = f.getAnnotation(ConfigField.class);
+                target = cf.location();
+                if(target.isEmpty())
+                    target = f.getName();
+                try
+                {
+                    if(!cf.comment().isEmpty())
+                    {
+                        if (!config.contains(target)) { config.set(target + "_COMMENT", cf.comment()); }
+                    }
+                    if (!config.contains(target)) {config.set(target, f.get(this));}
+                }
+                catch (IllegalArgumentException | IllegalAccessException e) { return null; }
+            }
+        }
+
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         for(Field f : cls.getFields())
         {
@@ -80,12 +110,8 @@ public abstract class AConfig extends AbstractFile{
         return this;
     }
 
-    public AConfig save() {
-        try {
-            config.save(file);
-        } catch (Exception e) {
-            ALogger.logError("IOException saving config!");
-        }
+    @Override
+    public <T extends AbstractFile> AConfig save() {
         Class<? extends AConfig> cls = getClass();
 
         for(Field f : cls.getFields())
@@ -109,6 +135,13 @@ public abstract class AConfig extends AbstractFile{
                 catch (IllegalArgumentException | IllegalAccessException e) { return null; }
             }
         }
+
+        try {
+            config.save(file);
+        } catch (Exception e) {
+            ALogger.logError("IOException saving config!");
+        }
+
         return this;
     }
 

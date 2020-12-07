@@ -11,7 +11,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Objects;
 
-public class Title {
+public class ATitle {
     private static final boolean SUPPORTED_API = Material.getMaterial("OBSERVER") != null;
 
 
@@ -81,7 +81,7 @@ public class Title {
         CHAT_COMPONENT_TEXT = chatComp;
     }
 
-    private Title() {
+    private ATitle() {
     }
 
     /**

@@ -10,14 +10,7 @@ import java.lang.invoke.MethodType;
 import java.util.concurrent.CompletableFuture;
 
 public class AReflection {
-    /**
-     * We use reflection mainly to avoid writing a new class for version barrier.
-     * The version barrier is for NMS that uses the Minecraft version as the main package name.
-     * <p>
-     * E.g. EntityPlayer in 1.15 is in the class {@code net.minecraft.server.v1_15_R1}
-     * but in 1.14 it's in {@code net.minecraft.server.v1_14_R1}
-     * In order to maintain cross-version compatibility we cannot import these classes.
-     */
+
     public static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
     public static final String CRAFTBUKKIT = "org.bukkit.craftbukkit." + VERSION + '.';
     public static final String NMS = "net.minecraft.server." + VERSION + '.';

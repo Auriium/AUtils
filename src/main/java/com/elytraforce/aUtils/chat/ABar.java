@@ -1,6 +1,6 @@
 package com.elytraforce.aUtils.chat;
 
-import com.elytraforce.aUtils.AUtil;
+import com.elytraforce.aUtils.util.AUtil;
 import com.elytraforce.aUtils.reflection.AReflection;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 @SuppressWarnings("unused")
-public class ActionBar {
+public class ABar {
     private static final boolean SIXTEEN;
     private static final boolean SPIGOT;
     /**
@@ -111,7 +111,7 @@ public class ActionBar {
         PACKET_PLAY_OUT_CHAT = packet;
     }
 
-    private ActionBar() {
+    private ABar() {
     }
 
     public static void sendActionBar(Player player, @Nullable String message) {
@@ -192,7 +192,7 @@ public class ActionBar {
                 sendActionBar(player, message);
             }
             // Re-sends the messages every 2 seconds so it doesn't go away from the player's screen.
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 40L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 40L);
     }
 
     /**
@@ -221,7 +221,7 @@ public class ActionBar {
                 }
             }
             // Re-sends the messages every 2 seconds so it doesn't go away from the player's screen.
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 40L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 40L);
     }
 
     /**
@@ -244,6 +244,6 @@ public class ActionBar {
                 repeater -= 40L;
                 if (repeater - 40L < -20L) cancel();
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 40L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 40L);
     }
 }

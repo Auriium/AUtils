@@ -1,6 +1,6 @@
 package com.elytraforce.aUtils.particles;
 
-import com.elytraforce.aUtils.AUtil;
+import com.elytraforce.aUtils.util.AUtil;
 import com.elytraforce.aUtils.math.AMath;
 import com.google.common.base.Enums;
 import org.bukkit.Color;
@@ -234,7 +234,8 @@ public final class AParticles {
                 // Next circle center location.
                 display.location.add(dir);
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
+        
     }
 
     /**
@@ -364,7 +365,7 @@ public final class AParticles {
 //                locs.put(new Vector(x2, y2, 0), display.rotation.clone());
                 }
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -397,7 +398,7 @@ public final class AParticles {
                 dynamicRadius += radiusDiv;
                 display.location.add(dir);
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -522,7 +523,7 @@ public final class AParticles {
                 theta += rateDiv;
                 if (--timer <= 0) cancel();
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -673,7 +674,7 @@ public final class AParticles {
                     display.spawn(x, 0, z);
                 }
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -727,7 +728,7 @@ public final class AParticles {
                 runnable.run();
                 for (AParticle display : displays) display.location.subtract(vector);
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, update);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, update);
     }
 
     /**
@@ -766,7 +767,7 @@ public final class AParticles {
                     if (multiplier >= endRate) opposite = true;
                 }
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, update);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, update);
     }
 
     /**
@@ -777,7 +778,7 @@ public final class AParticles {
      * @since 1.0.0
      */
     public static BukkitTask testDisplay(Runnable runnable) {
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(AUtil.getPlugin(), runnable, 0L, 1L);
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), runnable, 0L, 1L);
     }
 
     /**
@@ -807,7 +808,7 @@ public final class AParticles {
                 for (AParticle display : displays) display.rotate(vector);
                 runnable.run();
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, update);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, update);
     }
 
     /**
@@ -853,7 +854,7 @@ public final class AParticles {
                 runnable.run();
                 for (AParticle display : displays) display.location.subtract(vector);
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, update);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, update);
     }
 
     /**
@@ -994,7 +995,7 @@ public final class AParticles {
 
                 if (count-- == 0) cancel();
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -1051,7 +1052,7 @@ public final class AParticles {
                     orbital--;
                 }
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -1110,7 +1111,7 @@ public final class AParticles {
                     if (y > height) cancel();
                 }
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -1281,7 +1282,7 @@ public final class AParticles {
                     if (y >= height) cancel();
                 }
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -1313,7 +1314,7 @@ public final class AParticles {
                 cloud.spawn();
                 rain.spawn();
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -1728,7 +1729,7 @@ public final class AParticles {
                 if (++repeat > ticks) cancel();
                 else angle += speed;
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -1899,7 +1900,7 @@ public final class AParticles {
                         if (theta >= PII) cancel();
                     }
                 }
-            }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+            }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
         }
     }
 
@@ -2130,7 +2131,7 @@ public final class AParticles {
 
                 if (times > 20) cancel();
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, 1L);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, 1L);
     }
 
     /**
@@ -2273,7 +2274,7 @@ public final class AParticles {
                 }
                 if (times-- < 1) cancel();
             }
-        }.runTaskTimerAsynchronously(AUtil.getPlugin(), 0L, period);
+        }.runTaskTimerAsynchronously(AUtil.getUtils().getPlugin(), 0L, period);
     }
 
     /**

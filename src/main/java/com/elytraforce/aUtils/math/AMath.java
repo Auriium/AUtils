@@ -286,6 +286,22 @@ public class AMath {
         return start + random.nextFloat() * (end - start);
     }
 
+    public static int closestInteger(int of, List<Integer> in) {
+        int min = Integer.MAX_VALUE;
+        int closest = of;
+
+        for (int v : in) {
+            final int diff = Math.abs(v - of);
+
+            if (diff < min) {
+                min = diff;
+                closest = v;
+            }
+        }
+
+        return closest;
+    }
+
     public static int nextPowerOfTwo(int value) {
         if (value == 0) {
             return 1;
