@@ -4,11 +4,16 @@ package com.elytraforce.aUtils.database;
 import com.elytraforce.aUtils.util.BUtil;
 import net.md_5.bungee.api.plugin.Plugin;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.ibatis.jdbc.ScriptRunner;
 
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class BDatabase extends AbstractDatabase<Plugin> {
@@ -110,5 +115,23 @@ public class BDatabase extends AbstractDatabase<Plugin> {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void createTablesFromSchema(String file, Class<?> mainClass) throws IOException, SQLException{
+        try (final Connection connection = this.source.getConnection()) {
+            logger.debug("Assembling databases");
+            String beginning = "USE " + this.databaseName + ";";
+            logger.debug(beginning);
+            InputStream databaseSchema = BUtil.getUtils().getPlugin().getResourceAsStream(file);
+            List<InputStream> streams = Arrays.asList(
+                    new ByteArrayInputStream(beginning.getBytes()),
+                    databaseSchema);
+            InputStream schema = new SequenceInputStream(Collections.enumeration(streams));
+
+            ScriptRunner runner = new ScriptRunner(connection);
+            runner.setLogWriter(null);
+            runner.runScript(new InputStreamReader(schema));
+            logger.debug("Database upgraded!");
+        }
     }
 }

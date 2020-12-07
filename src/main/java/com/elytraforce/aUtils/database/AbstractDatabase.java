@@ -4,14 +4,18 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.slf4j.Logger;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +30,7 @@ public abstract class AbstractDatabase<T> {
     protected int numOfThreads;
     protected long maxBlockTime;
     protected boolean debugLoggingEnabled;
+    protected String databaseName;
 
     protected ThreadPoolExecutor asyncQueue;
     protected boolean shuttingDown;
@@ -36,6 +41,7 @@ public abstract class AbstractDatabase<T> {
         maxBlockTime = 15000L;
     }
 
+
     public AbstractDatabase<T> withConnectionInfo(String host, int port, String database) {
         return withConnectionInfo(host, port, database, true);
     }
@@ -45,6 +51,7 @@ public abstract class AbstractDatabase<T> {
                 host,
                 port,
                 database));
+        databaseName = database;
         return this;
     }
 

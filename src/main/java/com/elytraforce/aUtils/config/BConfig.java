@@ -1,7 +1,10 @@
 package com.elytraforce.aUtils.config;
 
 import com.elytraforce.aUtils.util.AUtil;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.elytraforce.aUtils.util.BUtil;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,14 +15,15 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("unused")
-public abstract class AConfig extends AbstractFile{
+public abstract class BConfig extends AbstractFile{
 
-    private YamlConfiguration config;
+    private Configuration config;
 
     @Override
-    public <T extends AbstractFile> AConfig create() {
-        file = new File(AUtil.getUtils().getPlugin().getDataFolder(), this.filePosition());
-        config = new YamlConfiguration();
+    public <T extends AbstractFile> BConfig create() {
+
+        file = new File(BUtil.getUtils().getPlugin().getDataFolder(), this.filePosition());
+        config = new Configuration();
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -31,13 +35,13 @@ public abstract class AConfig extends AbstractFile{
 
             load();
         }
+
         return this;
     }
 
     @Override
-    public <T extends AbstractFile> AConfig create(File file) {
-        this.file = file;
-        config = new YamlConfiguration();
+    public <T extends AbstractFile> BConfig create(File file) {
+        config = new Configuration();
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -46,20 +50,22 @@ public abstract class AConfig extends AbstractFile{
             } catch (IOException ex) {
                 AUtil.getUtils().error("IOException creating config " + file.getName());
             }
+
             load();
         }
+
         return this;
     }
 
     @Override
-    public <T extends AbstractFile> AConfig load() {
+    public <T extends AbstractFile> BConfig load() {
         try {
-            config.load(file);
+            config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
         } catch (Exception e) {
             AUtil.getUtils().error("IOException loading config!");
         }
 
-        Class<? extends AConfig> cls = getClass();
+        Class<? extends BConfig> cls = getClass();
 
         for(Field f : cls.getFields())
         {
@@ -83,7 +89,7 @@ public abstract class AConfig extends AbstractFile{
         }
 
         try {
-            config.save(file);
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config,file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,8 +115,8 @@ public abstract class AConfig extends AbstractFile{
     }
 
     @Override
-    public <T extends AbstractFile> AConfig save() {
-        Class<? extends AConfig> cls = getClass();
+    public <T extends AbstractFile> BConfig save() {
+        Class<? extends BConfig> cls = getClass();
 
         for(Field f : cls.getFields())
         {
@@ -135,7 +141,7 @@ public abstract class AConfig extends AbstractFile{
         }
 
         try {
-            config.save(file);
+            ConfigurationProvider.getProvider(YamlConfiguration.class).save(config,file);
         } catch (Exception e) {
             AUtil.getUtils().error("IOException saving config!");
         }
@@ -160,3 +166,4 @@ public abstract class AConfig extends AbstractFile{
         String comment() default "";
     }
 }
+

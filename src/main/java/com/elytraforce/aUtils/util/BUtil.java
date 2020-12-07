@@ -14,7 +14,7 @@ public class BUtil extends AbstractUtil<Plugin> {
         logger = LoggerFactory.getLogger(pluginInstance.getDescription().getName());
     }
 
-    public static BUtil newUtil(Plugin plugin) {
+    public static BUtil register(Plugin plugin) {
         return new BUtil(plugin);
     }
 

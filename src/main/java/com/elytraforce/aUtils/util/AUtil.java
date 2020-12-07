@@ -1,7 +1,6 @@
 package com.elytraforce.aUtils.util;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AUtil extends AbstractUtil<JavaPlugin> {
@@ -16,7 +15,7 @@ public class AUtil extends AbstractUtil<JavaPlugin> {
         logger = LoggerFactory.getLogger(pluginInstance.getName());
     }
 
-    public static AUtil newUtil(JavaPlugin plugin) {
+    public static AUtil register(JavaPlugin plugin) {
         return new AUtil(plugin);
     }
 

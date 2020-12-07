@@ -1,4 +1,4 @@
-package com.elytraforce.aUtils.chat;
+package com.elytraforce.aUtils.chat.fancy;
 
 import com.elytraforce.aUtils.reflection.AReflection;
 import org.bukkit.Material;

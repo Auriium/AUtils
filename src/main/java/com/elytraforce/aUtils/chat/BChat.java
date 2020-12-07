@@ -1,13 +1,12 @@
 package com.elytraforce.aUtils.chat;
 
 import com.elytraforce.aUtils.chat.models.AbstractChat;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("unused")
-public class AChat extends AbstractChat {
+public class BChat extends AbstractChat {
 
     public static String colorString(String string) {
         return ChatColor.translateAlternateColorCodes('&',string);
