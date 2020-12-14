@@ -1,0 +1,3 @@
+name: aUtils-Test
+main: com.elytraforce.aUtils.examples.PluginTest
+version: 1.0

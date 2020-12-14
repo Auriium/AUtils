@@ -1,10 +1,11 @@
 package com.elytraforce.aUtils.core.logger;
 
-public abstract class ALogger {
+public interface ALogger {
 
-    public abstract void log(String string);
-    public abstract void info(String string);
-    public abstract void warning(String string);
-    public abstract void error(String string);
+    public void log(String string);
+    public void info(String string);
+    public void warning(String string);
+    public void error(String string);
 
 }
+

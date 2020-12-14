@@ -111,9 +111,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>4.0</version>
-            <scope>provided</scope>
+            <version>5.0.0-BETA-1</version>
         </dependency>
-
     </dependencies>
 </project>
