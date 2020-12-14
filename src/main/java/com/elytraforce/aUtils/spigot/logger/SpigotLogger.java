@@ -2,7 +2,7 @@ package com.elytraforce.aUtils.spigot.logger;
 
 import com.elytraforce.aUtils.util.AUtil;
 
-public class ALogger {
+public class SpigotLogger {
     public static void error(String string) {
         AUtil.getUtils().error(string);
     }

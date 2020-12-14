@@ -3,7 +3,7 @@ package com.elytraforce.aUtils.bungee.logger;
 import com.elytraforce.aUtils.util.AUtil;
 import com.elytraforce.aUtils.util.BUtil;
 
-public class BLogger {
+public class BungeeLogger {
     public static void error(String string) {
         BUtil.getUtils().error(string);
     }

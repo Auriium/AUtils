@@ -1,10 +1,13 @@
 package com.elytraforce.aUtils.plugin;
 
-import com.google.inject.Singleton;
+import com.elytraforce.aUtils.core.AUtil;
+import com.google.inject.Inject;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@Singleton
+
 public abstract class APlugin extends JavaPlugin implements AbstractPlugin<JavaPlugin> {
+
+    @Inject protected AUtil util;
 
 }
 

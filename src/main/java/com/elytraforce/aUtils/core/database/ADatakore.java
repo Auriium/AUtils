@@ -1,59 +1,46 @@
 package com.elytraforce.aUtils.core.database;
 
 import com.elytraforce.aUtils.util.AUtil;
+import com.elytraforce.aUtils.util.BUtil;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.google.inject.Provides;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.slf4j.Logger;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class ADatakore {
 
-    private final HikariConfig config;
     private final HikariDataSource source;
     private final int numOfThreads;
     private final long maxBlockTime;
     private final ThreadPoolExecutor asyncQueue;
     private boolean shuttingDown;
 
+    private String databaseName;
+
     public boolean isClosed() {
         return source.isClosed();
     }
 
-    private ADatakore(String pluginName, String name, String username, String password, int port, String host, Boolean useSSL, Logger logger) {
+    private ADatakore(String databaseName, HikariConfig config, Logger logger) {
         config = new HikariConfig();
         numOfThreads = 5;
         maxBlockTime = 15000L;
-
-        config.setJdbcUrl(String.format(useSSL ? "jdbc:mysql://%s:%d/%s" : "jdbc:mysql://%s:%d/%s?useSSL=false",
-                host,
-                port,
-                name));
-        config.setUsername(username);
-        config.setPassword(password);
-        config.setPoolName(pluginName + "-datakore-hikari");
-
-        config.addDataSourceProperty("cachePrepStmts", true);
-        config.addDataSourceProperty("prepStmtCacheSize", 250);
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
-        config.addDataSourceProperty("useServerPrepStmts", true);
-        config.addDataSourceProperty("useLocalSessionState", true);
-        config.addDataSourceProperty("rewriteBatchedStatements", true);
-        config.addDataSourceProperty("cacheResultSetMetadata", true);
-        config.addDataSourceProperty("cacheServerConfiguration", true);
-        config.addDataSourceProperty("elideSetAutoCommit", true);
-        config.addDataSourceProperty("maintainTimeStats", false);
 
         source = new HikariDataSource(config);
 
@@ -63,6 +50,8 @@ public class ADatakore {
                 + "Password: " + config.getPassword() + "\n"
                 + "Properties: " + config.getDataSourceProperties());
         asyncQueue = (ThreadPoolExecutor) Executors.newFixedThreadPool(numOfThreads);
+
+        this.databaseName = databaseName;
     }
 
     public CompletableFuture<Void> update(String sql, Object... toSet) {
@@ -133,6 +122,21 @@ public class ADatakore {
         }
     }
 
+    public void createTablesFromSchema(String file, Class<?> mainClass) throws IOException, SQLException{
+        try (final Connection connection = this.source.getConnection()) {
+            String beginning = "USE " + this.databaseName + ";";
+            InputStream databaseSchema = BUtil.getUtils().getPlugin().getResourceAsStream(file);
+            List<InputStream> streams = Arrays.asList(
+                    new ByteArrayInputStream(beginning.getBytes()),
+                    databaseSchema);
+            InputStream schema = new SequenceInputStream(Collections.enumeration(streams));
+
+            ScriptRunner runner = new ScriptRunner(connection);
+            runner.setLogWriter(null);
+            runner.runScript(new InputStreamReader(schema));
+        }
+    }
+
     public static class Builder {
 
         private String pluginName;
@@ -200,7 +204,28 @@ public class ADatakore {
         }
 
         public ADatakore build() {
-            return new ADatakore(pluginName,name,username,password,port,host,useSSL,logger);
+            HikariConfig config = new HikariConfig();
+
+            config.setJdbcUrl(String.format(useSSL ? "jdbc:mysql://%s:%d/%s" : "jdbc:mysql://%s:%d/%s?useSSL=false",
+                    host,
+                    port,
+                    name));
+            config.setUsername(username);
+            config.setPassword(password);
+            config.setPoolName(pluginName + "-datakore-hikari");
+
+            config.addDataSourceProperty("cachePrepStmts", true);
+            config.addDataSourceProperty("prepStmtCacheSize", 250);
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+            config.addDataSourceProperty("useServerPrepStmts", true);
+            config.addDataSourceProperty("useLocalSessionState", true);
+            config.addDataSourceProperty("rewriteBatchedStatements", true);
+            config.addDataSourceProperty("cacheResultSetMetadata", true);
+            config.addDataSourceProperty("cacheServerConfiguration", true);
+            config.addDataSourceProperty("elideSetAutoCommit", true);
+            config.addDataSourceProperty("maintainTimeStats", false);
+
+            return new ADatakore(name,config,logger);
         }
 
     }
