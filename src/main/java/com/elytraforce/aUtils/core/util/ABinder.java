@@ -1,13 +1,13 @@
-package com.elytraforce.aUtils.plugin;
+package com.elytraforce.aUtils.core.util;
 
-import com.elytraforce.aUtils.core.AUtil;
+import com.elytraforce.aUtils.core.plugin.APlugin;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 
 public abstract class ABinder extends AbstractModule {
-    private final AbstractPlugin plugin;
+    private final APlugin plugin;
 
-    public ABinder(AbstractPlugin plugin) {
+    public ABinder(APlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -17,7 +17,7 @@ public abstract class ABinder extends AbstractModule {
 
     @Override
     public final void configure() {
-        this.bind(AbstractPlugin.class).toInstance(this.plugin);
+        this.bind(APlugin.class).toInstance(this.plugin);
 
         configureSpecific();
     }

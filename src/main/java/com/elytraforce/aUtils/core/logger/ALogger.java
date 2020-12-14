@@ -1,4 +1,4 @@
-package com.elytraforce.aUtils.core;
+package com.elytraforce.aUtils.core.logger;
 
 public abstract class ALogger {
 

@@ -1,6 +1,5 @@
 package com.elytraforce.aUtils.core.item;
 
-import com.elytraforce.aUtils.math.AMath;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
