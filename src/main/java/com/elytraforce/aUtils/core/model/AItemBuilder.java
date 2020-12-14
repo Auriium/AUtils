@@ -1,4 +1,4 @@
-package com.elytraforce.aUtils.item;
+package com.elytraforce.aUtils.core.model;
 
 import org.bukkit.Color;
 import org.bukkit.DyeColor;

@@ -12,6 +12,7 @@ public class AUtil extends AbstractUtil<JavaPlugin> {
 
         utilInstance = this;
         pluginName = pluginInstance.getName();
+        isDebug = false;
         logger = LoggerFactory.getLogger(pluginInstance.getName());
     }
 
@@ -21,10 +22,16 @@ public class AUtil extends AbstractUtil<JavaPlugin> {
 
     public boolean isDebug() { return isDebug; }
     public JavaPlugin getPlugin() {
+        if (pluginInstance == null || !pluginInstance.isEnabled()) {
+            throw new IllegalStateException("The plugin has not been registered yet!");
+        }
         return pluginInstance;
     }
 
     public static AUtil getUtils() {
+        if (utilInstance == null) {
+            throw new IllegalStateException("The utilities have not been registered yet!");
+        }
         return utilInstance;
     }
 

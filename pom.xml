@@ -6,7 +6,7 @@
 
     <groupId>com.elytraforce</groupId>
     <artifactId>aUtils</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>
@@ -108,5 +108,12 @@
             <artifactId>mybatis</artifactId>
             <version>3.4.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.0</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 </project>

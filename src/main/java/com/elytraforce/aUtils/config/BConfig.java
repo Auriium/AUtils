@@ -15,12 +15,12 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
 @SuppressWarnings("unused")
-public abstract class BConfig extends AbstractFile{
+public abstract class BConfig extends AbstractFile<BConfig>{
 
     private Configuration config;
 
     @Override
-    public <T extends AbstractFile> BConfig create() {
+    public BConfig create() {
 
         file = new File(BUtil.getUtils().getPlugin().getDataFolder(), this.filePosition());
         config = new Configuration();
@@ -40,7 +40,7 @@ public abstract class BConfig extends AbstractFile{
     }
 
     @Override
-    public <T extends AbstractFile> BConfig create(File file) {
+    public BConfig create(File file) {
         config = new Configuration();
 
         if (!file.exists()) {
@@ -58,7 +58,7 @@ public abstract class BConfig extends AbstractFile{
     }
 
     @Override
-    public <T extends AbstractFile> BConfig load() {
+    public BConfig load() {
         try {
             config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
         } catch (Exception e) {
@@ -115,7 +115,7 @@ public abstract class BConfig extends AbstractFile{
     }
 
     @Override
-    public <T extends AbstractFile> BConfig save() {
+    public BConfig save() {
         Class<? extends BConfig> cls = getClass();
 
         for(Field f : cls.getFields())

@@ -1,8 +1,9 @@
-package com.elytraforce.examples;
+package com.elytraforce.aUtils.examples.config;
 
 import com.elytraforce.aUtils.config.AConfig;
+import com.elytraforce.aUtils.config.BConfig;
 
-public class ExampleAConfig extends AConfig {
+public class ExampleAConfig extends BConfig {
     //an example config
 
     @Override

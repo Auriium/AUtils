@@ -2,14 +2,14 @@ package com.elytraforce.aUtils.config;
 
 import java.io.File;
 
-public abstract class AbstractFile {
+public abstract class AbstractFile<T> {
 
     protected File file;
 
-    public abstract <T extends AbstractFile> AbstractFile load();
-    public abstract <T extends AbstractFile> AbstractFile save();
-    public abstract <T extends AbstractFile> AbstractFile create();
-    public abstract <T extends AbstractFile> AbstractFile create(File file);
+    public abstract T load();
+    public abstract T save();
+    public abstract T create();
+    public abstract T create(File file);
 
     public abstract String filePosition();
 }

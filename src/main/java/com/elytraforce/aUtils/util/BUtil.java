@@ -9,6 +9,8 @@ public class BUtil extends AbstractUtil<Plugin> {
 
     private BUtil(Plugin plugin) {
         super(plugin);
+
+        isDebug = false;
         utilInstance = this;
         pluginName = pluginInstance.getDescription().getName();
         logger = LoggerFactory.getLogger(pluginInstance.getDescription().getName());
@@ -20,10 +22,16 @@ public class BUtil extends AbstractUtil<Plugin> {
 
     public boolean isDebug() { return isDebug; }
     public Plugin getPlugin() {
+        if (pluginInstance == null) {
+            throw new IllegalStateException("The plugin has not been registered yet!");
+        }
         return pluginInstance;
     }
 
     public static BUtil getUtils() {
+        if (utilInstance == null) {
+            throw new IllegalStateException("The utilities have not been registered yet!");
+        }
         return utilInstance;
     }
 
