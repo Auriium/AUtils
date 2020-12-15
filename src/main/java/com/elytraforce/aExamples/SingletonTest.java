@@ -1,4 +1,4 @@
-package com.elytraforce.aUtils.examples;
+package com.elytraforce.aExamples;
 
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.inject.Inject;

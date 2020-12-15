@@ -1,4 +1,4 @@
-package com.elytraforce.aUtils.examples;
+package com.elytraforce.aExamples;
 
 import com.elytraforce.aUtils.spigot.ASpigotBinder;
 import com.google.inject.Guice;

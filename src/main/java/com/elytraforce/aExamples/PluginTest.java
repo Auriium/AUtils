@@ -1,11 +1,9 @@
-package com.elytraforce.aUtils.examples;
+package com.elytraforce.aExamples;
 
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.elytraforce.aUtils.spigot.SpigotPlugin;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-
-import java.util.logging.Level;
 
 public class PluginTest extends SpigotPlugin {
 
@@ -15,9 +13,6 @@ public class PluginTest extends SpigotPlugin {
     @Override
     public void onEnable() {
 
-
-
-        this.getLogger().log(Level.SEVERE,"starting");
         try {
 
             Injector injector = new BinderTest(this).createInjector();
