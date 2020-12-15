@@ -10,15 +10,15 @@ Powerful utilities for plugin makers
 - Item serializer (to Base64, readableString is planned)
 
 # How to use
-Simply create a new instance of AUtil and pass your main class on startup.
-From there on out its as simple as using the various static utils!
+First, make sure your plugin extends either SpigotPlugin or BungeePlugin, NOT Plugin or JavaPlugin
+Next, you need a class that extends ABungeeBinder or ASpigotBinder.
+Finally, activate your injector and add your plugin to it!
+If you need to bind more classes, override configureSpecific.
 
-# Usage
-Shade and relocate AUtils, then
-
-`AUtils.newUtil().using(your plugin)` on startup. You don't need to cache it if you shaded and relocated.
-
-Congrats! You can now make static calls to every single method!
+```
+Injector injector = new BinderTest(this).createInjector();
+injector.injectMembers(this);
+```
 
 # Maven integration
 
@@ -27,7 +27,7 @@ C'mon, you should know what to do with these
 ```
     <repository>
         <id>repsy</id>
-        <name>My Private Maven Repositoty on Repsy</name>
+        <name>cum_in_my_ass</name>
         <url>https://repo.repsy.io/mvn/{MY REPSY USERNAME}/{MY REPOSITORY NAME}</url>
     </repository>
 
