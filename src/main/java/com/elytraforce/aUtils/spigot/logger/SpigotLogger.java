@@ -29,4 +29,9 @@ public class SpigotLogger implements ALogger {
     public void error(String string) {
         plugin.getLogger().log(Level.SEVERE,string);
     }
+
+    @Override
+    public void debug(String string) {
+
+    }
 }

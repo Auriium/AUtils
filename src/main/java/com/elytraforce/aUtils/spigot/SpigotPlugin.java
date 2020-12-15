@@ -5,6 +5,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class SpigotPlugin extends JavaPlugin implements APlugin<JavaPlugin> {
 
+    protected boolean debug;
+
+    public boolean isDebug() { return this.debug; }
+
     @Override
     public JavaPlugin getPlugin() {
         return this;
