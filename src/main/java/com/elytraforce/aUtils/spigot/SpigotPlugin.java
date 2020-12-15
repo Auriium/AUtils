@@ -3,7 +3,7 @@ package com.elytraforce.aUtils.spigot;
 import com.elytraforce.aUtils.core.plugin.APlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class SpigotPlugin extends JavaPlugin implements APlugin<JavaPlugin> {
+public abstract class SpigotPlugin extends JavaPlugin implements APlugin<JavaPlugin> {
 
     protected boolean debug;
 

@@ -3,6 +3,8 @@ package com.elytraforce.aUtils.core.plugin;
 import java.io.File;
 
 public interface APlugin<T> {
+    public String getPluginName();
+
     public T getPlugin();
 
     public File getDataFolder();

@@ -12,6 +12,11 @@ public class PluginTest extends SpigotPlugin {
     @Inject ConfigTest config;
 
     @Override
+    public String getPluginName() {
+        return "PluginTest";
+    }
+
+    @Override
     public void onEnable() {
 
         try {
