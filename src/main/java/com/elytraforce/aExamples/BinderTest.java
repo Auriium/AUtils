@@ -1,10 +1,11 @@
 package com.elytraforce.aExamples;
 
+import com.elytraforce.aUtils.core.util.AdvancedBinder;
 import com.elytraforce.aUtils.spigot.ASpigotBinder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class BinderTest extends ASpigotBinder {
+public class BinderTest extends AdvancedBinder {
     private final PluginTest plugin;
 
     public BinderTest(PluginTest plugin) {

@@ -10,6 +10,7 @@ public class PluginTest extends SpigotPlugin {
     @Inject ALogger logger;
     @Inject SingletonTest test;
     @Inject ConfigTest config;
+    @Inject CommandTest command;
 
     @Override
     public String getPluginName() {
@@ -36,6 +37,8 @@ public class PluginTest extends SpigotPlugin {
             config.create().load();
 
             logger.error(config.godIsHere);
+
+            this.getCommand("testCommand").setExecutor(command);
 
         } catch (RuntimeException e) {
             e.printStackTrace();

@@ -10,9 +10,25 @@ import java.lang.reflect.Field;
 
 public abstract class AConfig extends AFile{
 
-    @Inject AConfigProvider provider;
-    @Inject APlugin plugin;
-    @Inject ALogger logger;
+    @Inject private AConfigProvider provider;
+    @Inject private APlugin plugin;
+    @Inject private ALogger logger;
+
+    public Object getProvider(String path, Object def) {
+        return provider.get(path,def);
+    }
+
+    public void saveProvider() {
+        provider.save(file);
+    }
+
+    public void loadProvider() {
+        provider.load(file);
+    }
+
+    public void setProvider(String path, Object toSet) {
+        provider.set(path,toSet);
+    }
 
     @Override
     public AFile load() {

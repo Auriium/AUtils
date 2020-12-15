@@ -1,0 +1,6 @@
+name: PluginTest
+main: com.elytraforce.aExamples.PluginTest
+version: 1.0
+
+commands:
+  testCommand:
