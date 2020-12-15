@@ -6,7 +6,7 @@
 
     <groupId>com.elytraforce</groupId>
     <artifactId>aUtils</artifactId>
-    <version>1.6-C-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <build>
         <plugins>
             <plugin>

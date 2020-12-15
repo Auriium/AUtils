@@ -23,13 +23,12 @@ import java.util.concurrent.*;
 public class ADatakore {
 
     private final HikariDataSource source;
-    private final int numOfThreads;
     private final long maxBlockTime;
     private final ThreadPoolExecutor asyncQueue;
 
     private final ALogger logger;
 
-    private String databaseName;
+    private final String databaseName;
 
     public boolean isClosed() {
         return source.isClosed();
@@ -39,7 +38,7 @@ public class ADatakore {
         this.logger = logger;
 
         config = new HikariConfig();
-        numOfThreads = 5;
+        int numOfThreads = 5;
         maxBlockTime = 15000L;
 
         source = new HikariDataSource(config);

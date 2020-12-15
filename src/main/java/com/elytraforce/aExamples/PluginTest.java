@@ -9,6 +9,7 @@ public class PluginTest extends SpigotPlugin {
 
     @Inject ALogger logger;
     @Inject SingletonTest test;
+    @Inject ConfigTest config;
 
     @Override
     public void onEnable() {
@@ -20,7 +21,17 @@ public class PluginTest extends SpigotPlugin {
 
             test.call();
 
-            this.logger.error("test of startup with interface sex time");
+            this.logger.error("test of startup with interface sex time | i coupled my pp with your gf's anal port");
+
+            this.debug = true;
+
+            logger.debug("CHEESE MAN IS COMING");
+            logger.error("HE SEES EVERYTHING");
+
+            config.create().load();
+
+            logger.error(config.godIsHere);
+
         } catch (RuntimeException e) {
             e.printStackTrace();
         }

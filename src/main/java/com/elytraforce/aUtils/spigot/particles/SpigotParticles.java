@@ -1992,7 +1992,7 @@ public class SpigotParticles {
      * @return the rotated vector.
      * @since 1.0.0
      */
-    public Vector rotateAroundX(Vector vector, double angle) {
+    public static Vector rotateAroundX(Vector vector, double angle) {
         if (angle == 0) return vector;
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
@@ -2010,7 +2010,7 @@ public class SpigotParticles {
      * @return the rotated vector.
      * @since 1.0.0
      */
-    public Vector rotateAroundY(Vector vector, double angle) {
+    public static Vector rotateAroundY(Vector vector, double angle) {
         if (angle == 0) return vector;
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
@@ -2028,7 +2028,7 @@ public class SpigotParticles {
      * @return the rotated vector.
      * @since 1.0.0
      */
-    public Vector rotateAroundZ(Vector vector, double angle) {
+    public static Vector rotateAroundZ(Vector vector, double angle) {
         if (angle == 0) return vector;
         double cos = Math.cos(angle);
         double sin = Math.sin(angle);
