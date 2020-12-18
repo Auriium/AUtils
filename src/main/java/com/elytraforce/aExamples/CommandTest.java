@@ -4,14 +4,29 @@ import com.google.inject.Inject;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class CommandTest implements CommandExecutor {
+import java.util.Arrays;
+import java.util.List;
 
-    @Inject public ConfigTest config;
+public class CommandTest extends Command implements TabExecutor {
+
+    public ConfigTest config;
+
+    @Inject
+    protected CommandTest(@NotNull String name, ConfigTest config) {
+        super(name);
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        return this.execute(sender,label,args);
+    }
+
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         sender.sendMessage("I AM BIG BERT");
 
         sender.sendMessage(config.godIsHere);
@@ -24,5 +39,10 @@ public class CommandTest implements CommandExecutor {
 
         sender.sendMessage(config.godIsHere);
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        return Arrays.asList("god","cum");
     }
 }

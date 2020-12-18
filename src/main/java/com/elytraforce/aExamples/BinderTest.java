@@ -1,26 +1,19 @@
 package com.elytraforce.aExamples;
 
-import com.elytraforce.aUtils.core.util.AdvancedBinder;
-import com.elytraforce.aUtils.spigot.ASpigotBinder;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.elytraforce.aUtils.core.plugin.APlugin;
+import com.elytraforce.aUtils.core.util.ABinder;
 
-public class BinderTest extends AdvancedBinder {
-    private final PluginTest plugin;
+public class BinderTest extends ABinder {
+    private PluginTest pluginTest;
 
     public BinderTest(PluginTest plugin) {
         super(plugin);
 
-        this.plugin = plugin;
-    }
-
-    @Override
-    public Injector createInjector() {
-        return Guice.createInjector(this);
+        this.pluginTest = plugin;
     }
 
     @Override
     public void configureSpecific() {
-        bind(PluginTest.class).toInstance(plugin);
+        this.bind(PluginTest.class).toInstance(pluginTest);
     }
 }

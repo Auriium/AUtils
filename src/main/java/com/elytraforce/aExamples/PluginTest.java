@@ -1,16 +1,18 @@
 package com.elytraforce.aExamples;
 
+import com.elytraforce.aUtils.core.command.ACommandManager;
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.elytraforce.aUtils.spigot.SpigotPlugin;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 public class PluginTest extends SpigotPlugin {
 
-    @Inject ALogger logger;
-    @Inject SingletonTest test;
-    @Inject ConfigTest config;
-    @Inject CommandTest command;
+    @Inject private ALogger logger;
+    @Inject private SingletonTest test;
+    @Inject private ConfigTest config;
+    @Inject private CommandTest command;
+    @Inject private ACommandTest command2;
+    @Inject private ACommandManager commandManager;
 
     @Override
     public String getPluginName() {
@@ -22,8 +24,7 @@ public class PluginTest extends SpigotPlugin {
 
         try {
 
-            Injector injector = new BinderTest(this).createInjector();
-            injector.injectMembers(this);
+            new BinderTest(this).createInjector().injectMembers(this);
 
             test.call();
 
@@ -38,7 +39,9 @@ public class PluginTest extends SpigotPlugin {
 
             logger.error(config.godIsHere);
 
-            this.getCommand("testCommand").setExecutor(command);
+            commandManager.registerCommand(command2);
+
+
 
         } catch (RuntimeException e) {
             e.printStackTrace();
