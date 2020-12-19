@@ -20,7 +20,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class ADatakore {
+/**
+ * HikariCP wrapper that handles all database related stuff.
+ * TODO: add sqlite support because people like that
+ */
+@SuppressWarnings("unused")
+public class ADataKore {
 
     private final HikariDataSource source;
     private final long maxBlockTime;
@@ -34,7 +39,7 @@ public class ADatakore {
         return source.isClosed();
     }
 
-    private ADatakore(String databaseName, HikariConfig config, ALogger logger) {
+    private ADataKore(String databaseName, HikariConfig config, ALogger logger) {
         this.logger = logger;
 
         config = new HikariConfig();
@@ -123,7 +128,7 @@ public class ADatakore {
     public void createTablesFromSchema(String file, Class<?> mainClass) throws IOException, SQLException{
         try (final Connection connection = this.source.getConnection()) {
             String beginning = "USE " + this.databaseName + ";";
-            InputStream databaseSchema = ADatakore.class.getResourceAsStream(file);
+            InputStream databaseSchema = ADataKore.class.getResourceAsStream(file);
             List<InputStream> streams = Arrays.asList(
                     new ByteArrayInputStream(beginning.getBytes()),
                     databaseSchema);
@@ -192,7 +197,7 @@ public class ADatakore {
             return this;
         }
 
-        public ADatakore build() {
+        public ADataKore build() {
             HikariConfig config = new HikariConfig();
 
             config.setJdbcUrl(String.format(useSSL ? "jdbc:mysql://%s:%d/%s" : "jdbc:mysql://%s:%d/%s?useSSL=false",
@@ -214,7 +219,7 @@ public class ADatakore {
             config.addDataSourceProperty("elideSetAutoCommit", true);
             config.addDataSourceProperty("maintainTimeStats", false);
 
-            return new ADatakore(name,config,logger);
+            return new ADataKore(name,config,logger);
         }
 
     }

@@ -1,13 +1,10 @@
-package com.elytraforce.aUtils.core.command.model;
+package com.elytraforce.aUtils.core.command;
 
-import com.elytraforce.aUtils.core.command.ACommandSender;
-import com.elytraforce.aUtils.core.command.model.ACommand;
-import org.apache.commons.lang.Validate;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents a simple command with handling for incorrect usage and arg counts.
+ */
 public abstract class ACommandExecutor implements ACommand {
 
     public abstract int getMinArgs();
@@ -48,25 +45,5 @@ public abstract class ACommandExecutor implements ACommand {
         return onTabComplete(sender,args);
     }
 
-    public <T extends Collection<? super String>> T copyPartialMatches(final String token, final Iterable<String> originals, final T collection) throws UnsupportedOperationException, IllegalArgumentException {
-        Validate.notNull(token, "Search token cannot be null");
-        Validate.notNull(collection, "Collection cannot be null");
-        Validate.notNull(originals, "Originals cannot be null");
 
-        for (String string : originals) {
-            if (startsWithIgnoreCase(string, token)) {
-                collection.add(string);
-            }
-        }
-
-        return collection;
-    }
-
-    public static boolean startsWithIgnoreCase(final String string, final String prefix) throws IllegalArgumentException, NullPointerException {
-        Validate.notNull(string, "Cannot check a null string for a match");
-        if (string.length() < prefix.length()) {
-            return false;
-        }
-        return string.regionMatches(true, 0, prefix, 0, prefix.length());
-    }
 }

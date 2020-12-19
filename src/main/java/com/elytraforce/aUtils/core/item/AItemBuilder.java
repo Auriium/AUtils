@@ -13,6 +13,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 
+/**
+ * Builder class for cleanly making itemstacks.
+ */
 public class AItemBuilder {
     private ItemStack stack;
 

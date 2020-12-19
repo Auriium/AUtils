@@ -1,19 +1,47 @@
 package com.elytraforce.aExamples;
 
 import com.elytraforce.aUtils.core.command.ACommandSender;
-import com.elytraforce.aUtils.core.command.model.AFancyExecutor;
+import com.elytraforce.aUtils.core.command.AMapExecutor;
+import com.elytraforce.aUtils.core.command.map.LeafMap;
+import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
+import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.inject.Inject;
-import org.bukkit.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-public class ACommandTest extends AFancyExecutor {
+public class ACommandTest extends AMapExecutor {
 
     @Inject ConfigTest config;
     @Inject ALogger logger;
+
+    private final LeafMap commandMap = new LeafMap.Builder()
+            .setAutocomplete(true)
+            .put(() -> {
+                return PointLeaf.newInstance("cheat", (sender, args) -> {
+                    sender.sendMessage(args[0] + " is bad!");
+                    return true;
+                });
+            })
+            .put(() -> {
+                return PointLeaf.newInstance("supply", (sender, args) -> {
+                    if (sender.hasPermission("jesus.penis")) {
+                        sender.sendMessage("henlo");
+                    } else {
+                        sender.sendMessage("you are not jesus worshipper");
+                    }
+                    return true;
+                });
+            })
+            .putWrongArgs(() -> {
+                return PointLeaf.newInstance("supply", ((sender, args) -> {
+                    sender.sendMessage("i'm COOMING (You fucked up somewhere)");
+                    return true;
+                }));
+            })
+            .build();
+
 
     @Override
     public int getMinArgs() {
@@ -63,22 +91,18 @@ public class ACommandTest extends AFancyExecutor {
     }
 
     @Override
-    public boolean onCommand(ACommandSender sender, String[] args) {
-        sender.sendMessage("I AM EATING FOOD NOW");
-        return true;
+    public TabMap onTabMap(ACommandSender sender, String[] args) {
+        return new TabMap()
+                .add(0, () -> Arrays.asList("ss","vev"))
+                .add(1,new ArrayList<>())
+                .add(2, () -> Arrays.asList("dwd","ewe"))
+                .add(3, () -> Arrays.asList("sad","things"))
+                .add(4,"test","test2");
+
     }
 
     @Override
-    public List<String> onTabComplete(ACommandSender sender, String[] args) {
-        logger.warning(args.length + "legnth");
-
-        switch (args.length) {
-            case 1:
-                return copyPartialMatches(args[0],Arrays.asList("args0test1","args0test2"),new ArrayList<>());
-            case 2:
-                return copyPartialMatches(args[1],Arrays.asList("args1test1","args1test2"),new ArrayList<>());
-            default:
-                return new ArrayList<>();
-        }
+    public LeafMap onCommandMap(ACommandSender sender, String[] args) {
+        return commandMap;
     }
 }

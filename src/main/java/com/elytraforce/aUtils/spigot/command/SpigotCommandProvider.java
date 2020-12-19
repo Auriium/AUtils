@@ -1,6 +1,6 @@
 package com.elytraforce.aUtils.spigot.command;
 
-import com.elytraforce.aUtils.core.command.model.ACommand;
+import com.elytraforce.aUtils.core.command.ACommand;
 import com.elytraforce.aUtils.core.command.ACommandManager;
 import com.elytraforce.aUtils.spigot.SpigotPlugin;
 import com.google.inject.Inject;

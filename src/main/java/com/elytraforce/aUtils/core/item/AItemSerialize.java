@@ -13,6 +13,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @SuppressWarnings("unused")
+/**
+ * Class to handle serializing items and inventories to base64 and back.
+ */
 public class AItemSerialize {
 
     public static String serializeItem(ItemStack item) {

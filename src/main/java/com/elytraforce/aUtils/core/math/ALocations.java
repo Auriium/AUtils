@@ -10,6 +10,9 @@ import org.bukkit.util.Vector;
 import java.util.*;
 
 @SuppressWarnings("unused")
+/**
+ * Static utility class for handling locations
+ */
 public class ALocations {
 
     public static Location getFixedLocation(Location var0, BlockFace var1) {

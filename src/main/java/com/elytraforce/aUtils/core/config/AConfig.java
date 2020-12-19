@@ -6,8 +6,16 @@ import com.google.inject.Inject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
+/**
+ * Represents a file that is used to hold configuration files. Automatically fills fields if they are missing
+ * as well as handles all saving loading and creating.
+ */
 public abstract class AConfig extends AFile{
 
     @Inject private AConfigProvider provider;
@@ -145,6 +153,14 @@ public abstract class AConfig extends AFile{
         }
 
         return this;
+    }
+
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface AField
+    {
+        String location() default "";
+        String comment() default "";
     }
 
 }

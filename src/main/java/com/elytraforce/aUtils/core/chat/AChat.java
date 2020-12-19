@@ -5,6 +5,9 @@ import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Interface representing something that can interact with chat and chat colors
+ */
 public interface AChat {
 
     public String colorString(String string);

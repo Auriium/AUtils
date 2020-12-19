@@ -6,6 +6,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Represents a file that can be created, loaded, and saved, and has a set position.
+ */
 public abstract class AFile {
 
     protected File file;
@@ -16,13 +19,5 @@ public abstract class AFile {
     public abstract AFile create(File file);
 
     public abstract String filePosition();
-
-    @Target(ElementType.FIELD)
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface AField
-    {
-        String location() default "";
-        String comment() default "";
-    }
 }
 

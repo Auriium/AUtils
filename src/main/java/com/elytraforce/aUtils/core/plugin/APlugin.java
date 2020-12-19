@@ -1,9 +1,11 @@
 package com.elytraforce.aUtils.core.plugin;
 
-import com.google.inject.Binder;
-
 import java.io.File;
 
+/**
+ * Interface representing and wrapping a plugin
+ * @param <T> represents the plugin being wrapped
+ */
 public interface APlugin<T> {
     //TODO: let APlugin do more cool shit
 

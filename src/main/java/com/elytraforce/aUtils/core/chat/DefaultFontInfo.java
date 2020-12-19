@@ -1,5 +1,8 @@
 package com.elytraforce.aUtils.core.chat;
 
+/**
+ * Some shit i copy pasted off of spigot.net don't blame me
+ */
 public enum DefaultFontInfo{
 
     A('A', 5),

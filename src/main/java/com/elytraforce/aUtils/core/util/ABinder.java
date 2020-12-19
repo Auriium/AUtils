@@ -21,6 +21,11 @@ import com.google.inject.Injector;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Abstract binder extending a Guice module that handles boilerplate code
+ * and binding the correct providers to their abstractions based on the type
+ * of plugin.
+ */
 public abstract class ABinder extends AbstractModule {
     private final APlugin plugin;
 

@@ -2,6 +2,10 @@ package com.elytraforce.aUtils.core.config;
 
 import java.io.File;
 
+/**
+ * An abstraction that is bound to a provider which handles interacting with T configuration
+ * @param <T> represents the type of configuration used
+ */
 public abstract class AConfigProvider<T> {
 
     protected T config;

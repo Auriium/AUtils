@@ -1,11 +1,11 @@
-package com.elytraforce.aUtils.core.command.model;
-
-import com.elytraforce.aUtils.core.command.ACommandSender;
-import com.elytraforce.aUtils.core.plugin.APlugin;
+package com.elytraforce.aUtils.core.command;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An interface representing something that can be executed and has certain values
+ */
 public interface ACommand {
 
     //this implements ACommand

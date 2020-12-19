@@ -1,6 +1,6 @@
 package com.elytraforce.aUtils.spigot.command;
 
-import com.elytraforce.aUtils.core.command.model.ACommand;
+import com.elytraforce.aUtils.core.command.ACommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

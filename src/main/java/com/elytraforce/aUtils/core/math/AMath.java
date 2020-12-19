@@ -12,6 +12,9 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collector;
 
 @SuppressWarnings("unused")
+/**
+ * Static utility class for handling math, randomization, and other things i don't want to copy paste.
+ */
 public class AMath {
 
     public static final float nanoToSec = 1 / 1000000000f;

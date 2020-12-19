@@ -3,6 +3,9 @@ package com.elytraforce.aUtils.core.config;
 import com.elytraforce.aUtils.core.chat.AChat;
 import com.google.inject.Inject;
 
+/**
+ * An experimental configuration with a fixed position and a system for returning the correct messages.
+ */
 public abstract class AMessageConfig extends AConfig {
 
     @Inject protected AChat chat;
