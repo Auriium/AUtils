@@ -20,4 +20,5 @@ public interface Leaf {
     public Leaf get();
 
     public boolean isVariable();
+    public int getPosition();
 }

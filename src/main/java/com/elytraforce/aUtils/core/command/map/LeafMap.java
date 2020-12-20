@@ -3,43 +3,30 @@ package com.elytraforce.aUtils.core.command.map;
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.leaf.Leaf;
 import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
-import com.elytraforce.aUtils.core.command.model.LeafSupplier;
+import com.elytraforce.aUtils.core.command.model.SplittableLeaf;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.ToStringFunction;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.function.Supplier;
 
-public class LeafMap implements LeafSupplier {
+public class LeafMap {
 
     private final PointLeaf wrongArgsAction;
     private final PointLeaf errorAction;
-    private final ArrayList<Leaf> subCommandComponent;
+    private final LinkedHashSet<Leaf> subCommandComponent;
     private final Boolean autoComplete;
 
-    private LeafMap(PointLeaf wrongArgsAction, PointLeaf errorAction, ArrayList<Leaf> subCommandComponent, Boolean autoComplete) {
+    private LeafMap(PointLeaf wrongArgsAction, PointLeaf errorAction, LinkedHashSet<Leaf> subCommandComponent, Boolean autoComplete) {
         this.wrongArgsAction = wrongArgsAction;
         this.errorAction = errorAction;
         this.subCommandComponent = subCommandComponent;
         this.autoComplete = autoComplete;
     }
 
-    @Override
     public boolean run(ACommandSender sender, String[] args) {
         return getRelativeAction(args).getHandle().run(sender,args);
-    }
-
-    @Override
-    public Integer calcMinArgs() {
-        return 0;
-    }
-
-    @Override
-    public Integer calcMaxArgs() {
-        //TODO: getMax
-        return 0;
     }
 
     private Leaf getRelativeAction(String[] args) {
@@ -75,7 +62,7 @@ public class LeafMap implements LeafSupplier {
     public static class Builder {
         private PointLeaf wrongArgsAction;
         private PointLeaf errorAction;
-        private ArrayList<Leaf> subCommandComponent;
+        private LinkedHashSet<Leaf> subCommandComponent;
         private Boolean autoComplete;
 
         public Builder() {
@@ -88,7 +75,7 @@ public class LeafMap implements LeafSupplier {
                 return true;
             });
             this.autoComplete = false;
-            this.subCommandComponent = new ArrayList<>();
+            this.subCommandComponent = new LinkedHashSet<>();
         }
 
         public Builder setAutocomplete(Boolean bool) {

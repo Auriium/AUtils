@@ -1,5 +1,6 @@
 package com.elytraforce.aExamples;
 
+import com.elytraforce.aUtils.core.chat.AChat;
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
@@ -15,6 +16,8 @@ public class ACommandTest extends AMapExecutor {
 
     @Inject ConfigTest config;
     @Inject ALogger logger;
+    @Inject
+    AChat chat;
 
     private final LeafMap commandMap = new LeafMap.Builder()
             .setAutocomplete(true)
@@ -34,9 +37,16 @@ public class ACommandTest extends AMapExecutor {
                     return true;
                 });
             })
+            .put(() -> {
+                return null;
+            })
             .putWrongArgs(() -> {
                 return PointLeaf.newInstance("supply", ((sender, args) -> {
-                    sender.sendMessage("i'm COOMING (You fucked up somewhere)");
+                    sender.sendMessage(chat.colorString("&bBall&aSack &f- &7Commands"));
+                    sender.sendMessage(chat.colorString(""));
+                    sender.sendMessage(chat.colorString("&7/ballsack &bcheat"));
+                    sender.sendMessage(chat.colorString("&7/ballsack &bsupply"));
+                    sender.sendMessage(chat.colorString("&7/ballsack &beat <grenade/painis>"));
                     return true;
                 }));
             })
