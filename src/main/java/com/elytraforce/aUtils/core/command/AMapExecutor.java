@@ -1,7 +1,7 @@
 package com.elytraforce.aUtils.core.command;
 
 import com.elytraforce.aUtils.core.chat.AChat;
-import com.elytraforce.aUtils.core.command.model.LeafSupplier;
+import com.elytraforce.aUtils.core.command.map.NewLeafMap;
 import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.google.inject.Inject;
 
@@ -41,10 +41,10 @@ public abstract class AMapExecutor extends ACommandExecutor {
 
     @Override
     public boolean onCommand(ACommandSender sender, String[] args) {
-        return onCommandMap(sender,args).run(sender, args);
+        return onCommandMap().runActionFromArgs(sender, args);
     }
 
     public abstract TabMap onTabMap(ACommandSender sender, String[] args);
-    public abstract LeafSupplier onCommandMap(ACommandSender sender, String[] args);
+    public abstract NewLeafMap onCommandMap();
 
 }

@@ -2,23 +2,29 @@ package com.elytraforce.aUtils.core.command.leaf;
 
 import com.elytraforce.aUtils.core.command.model.ActionHandler;
 
-/**
- * Interface representing something that can be used by a command whether
- * it be an action, a value, or something that splits into more actions and values
- *
- * TODO: usage and permission related sh*t probably in it's own interface
- *
- * Why is it called a leaf? I don't fucking know, i was thinking about springbeans and
- * thought, if those little shits can be called beans i will call my command
- * framework leaf. Fuck you :)
- */
-public interface Leaf {
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
-    public ActionHandler getHandle();
+public abstract class Leaf {
 
-    public String getIdentifier();
-    public Leaf get();
+    protected Leaf(String identifier) {
+        //where containerPosition represents the position number of the container holding leaf
+        this.identifier = identifier;
+        this.position = 0;
 
-    public boolean isVariable();
-    public int getPosition();
+    }
+
+    protected int position;
+    protected String identifier;
+
+    public String getIdentifier() { return this.identifier; }
+    public Integer getPosition() { return this.position; }
+
+    public abstract ActionHandler getActionHandler(String[] args);
+
+    public abstract void register(int positionSuper, LinkedHashMap<Integer, LinkedHashSet<Leaf>> map);
+
+
+
 }

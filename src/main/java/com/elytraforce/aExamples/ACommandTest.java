@@ -3,8 +3,9 @@ package com.elytraforce.aExamples;
 import com.elytraforce.aUtils.core.chat.AChat;
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
-import com.elytraforce.aUtils.core.command.map.LeafMap;
+import com.elytraforce.aUtils.core.command.leaf.SplitLeaf;
 import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
+import com.elytraforce.aUtils.core.command.map.NewLeafMap;
 import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.inject.Inject;
@@ -14,44 +15,30 @@ import java.util.Arrays;
 
 public class ACommandTest extends AMapExecutor {
 
-    @Inject ConfigTest config;
-    @Inject ALogger logger;
-    @Inject
-    AChat chat;
+    @Inject private ConfigTest config;
+    @Inject private ALogger logger;
+    @Inject private AChat chat;
 
-    private final LeafMap commandMap = new LeafMap.Builder()
-            .setAutocomplete(true)
-            .put(() -> {
-                return PointLeaf.newInstance("cheat", (sender, args) -> {
-                    sender.sendMessage(args[0] + " is bad!");
-                    return true;
-                });
-            })
-            .put(() -> {
-                return PointLeaf.newInstance("supply", (sender, args) -> {
-                    if (sender.hasPermission("jesus.penis")) {
-                        sender.sendMessage("henlo");
-                    } else {
-                        sender.sendMessage("you are not jesus worshipper");
-                    }
-                    return true;
-                });
-            })
-            .put(() -> {
-                return null;
-            })
-            .putWrongArgs(() -> {
-                return PointLeaf.newInstance("supply", ((sender, args) -> {
-                    sender.sendMessage(chat.colorString("&bBall&aSack &f- &7Commands"));
-                    sender.sendMessage(chat.colorString(""));
-                    sender.sendMessage(chat.colorString("&7/ballsack &bcheat"));
-                    sender.sendMessage(chat.colorString("&7/ballsack &bsupply"));
-                    sender.sendMessage(chat.colorString("&7/ballsack &beat <grenade/painis>"));
-                    return true;
-                }));
-            })
-            .build();
-
+    private NewLeafMap map = new NewLeafMap()
+            .put(new PointLeaf("args0hello",(sender, args) -> {
+                sender.sendMessage("i like dog");
+                return true;
+            }))
+            .put(new SplitLeaf("args0split")
+                    .put(new PointLeaf("args1cheese",(sender, args) -> {
+                        sender.sendMessage("did you know humans are made of cow");
+                        return true;
+                    }))
+                    .defaultWrongArgs(new PointLeaf("args1cow",(sender, args) -> {
+                        sender.sendMessage("loud screaming noises from " + args[0]);
+                        return true;
+                    })))
+            .putWrongArgs(new PointLeaf("ignored",(sender, args) -> {
+                sender.sendMessage("ACommandTest - Commands");
+                sender.sendMessage("/ballsack args0hello");
+                sender.sendMessage("/ballsack args0split args1<cheese/cow>");
+                return true;
+            }));
 
     @Override
     public int getMinArgs() {
@@ -112,7 +99,7 @@ public class ACommandTest extends AMapExecutor {
     }
 
     @Override
-    public LeafMap onCommandMap(ACommandSender sender, String[] args) {
-        return commandMap;
+    public NewLeafMap onCommandMap() {
+        return map;
     }
 }

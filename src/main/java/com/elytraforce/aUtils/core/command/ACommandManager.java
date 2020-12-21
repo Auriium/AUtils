@@ -1,12 +1,13 @@
 package com.elytraforce.aUtils.core.command;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 public abstract class ACommandManager {
 
-    protected ArrayList<ACommand> commands = new ArrayList<>();
+    protected LinkedHashSet<ACommand> commands = new LinkedHashSet<>();
 
     public abstract void registerCommand(ACommand command);
-    public ArrayList<ACommand> getCommands() { return this.commands; };
+    public LinkedHashSet<ACommand> getCommands() { return this.commands; };
 
 }

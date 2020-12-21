@@ -3,17 +3,16 @@ package com.elytraforce.aUtils.core.command.map;
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.leaf.Leaf;
 import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
-import com.elytraforce.aUtils.core.command.model.SplittableLeaf;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import me.xdrop.fuzzywuzzy.ToStringFunction;
 import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.function.Supplier;
 
-public class LeafMap {
+/*public class LeafMap {
 
-    private final PointLeaf wrongArgsAction;
     private final PointLeaf errorAction;
     private final LinkedHashSet<Leaf> subCommandComponent;
     private final Boolean autoComplete;
@@ -88,15 +87,15 @@ public class LeafMap {
             return this;
         }
 
-        /*This leaf is called when someone writes a wrong command with autocomplete off
-        or when no arguments are entered. */
+        *//*This leaf is called when someone writes a wrong command with autocomplete off
+        or when no arguments are entered. *//*
         public Builder putWrongArgs(Supplier<PointLeaf> action) {
             this.wrongArgsAction = action.get();
             return this;
         }
 
 
-        /*This leaf is called when an error occurs while running this leafMap TODO test this*/
+        *//*This leaf is called when an error occurs while running this leafMap TODO test this*//*
         public Builder putError(Supplier<PointLeaf> action) {
             this.errorAction = action.get();
             return this;
@@ -107,4 +106,4 @@ public class LeafMap {
         }
     }
 
-}
+}*/
