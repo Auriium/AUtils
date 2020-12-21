@@ -5,8 +5,10 @@ import com.elytraforce.aUtils.core.command.ACommandManager;
 import com.elytraforce.aUtils.spigot.SpigotPlugin;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandMap;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.SimplePluginManager;
 
 import java.lang.reflect.Field;
 
@@ -15,18 +17,17 @@ public class SpigotCommandProvider extends ACommandManager {
 
     @Inject private SpigotPlugin plugin;
 
-    private CommandMap commandMap;
+    private SimpleCommandMap commandMap;
 
     @Inject
     public SpigotCommandProvider(SpigotPlugin plugin) {
+        SimplePluginManager spm = (SimplePluginManager) Bukkit.getPluginManager();
         try {
 
-            final Field bukkitCommandMap = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            bukkitCommandMap.setAccessible(true);
+            Field field = FieldUtils.getDeclaredField( spm.getClass(), "commandMap", true );
+            commandMap = (SimpleCommandMap) field.get( spm );
 
-            this.commandMap = (CommandMap) bukkitCommandMap.get(Bukkit.getServer());
-
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }

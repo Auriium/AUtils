@@ -3,9 +3,11 @@ package com.elytraforce.aExamples;
 import com.elytraforce.aUtils.core.chat.AChat;
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
+import com.elytraforce.aUtils.core.command.arguments.StringArgument;
 import com.elytraforce.aUtils.core.command.leaf.SplitLeaf;
 import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
-import com.elytraforce.aUtils.core.command.map.NewLeafMap;
+import com.elytraforce.aUtils.core.command.leaf.ValueableLeaf;
+import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.inject.Inject;
@@ -19,7 +21,7 @@ public class ACommandTest extends AMapExecutor {
     @Inject private ALogger logger;
     @Inject private AChat chat;
 
-    private NewLeafMap map = new NewLeafMap()
+    private LeafMap map = new LeafMap()
             .put(new PointLeaf("args0hello",(sender, args) -> {
                 sender.sendMessage("i like dog");
                 return true;
@@ -33,10 +35,23 @@ public class ACommandTest extends AMapExecutor {
                         sender.sendMessage("loud screaming noises from " + args[0]);
                         return true;
                     })))
+            .put(new ValueableLeaf("args0value",(sender, args) -> {
+                    sender.sendMessage(args.getString("string1"));
+                    sender.sendMessage(args.getString("string2"));
+                    return true;
+                    })
+                    .argument(new StringArgument("string1"))
+                    .argument(new StringArgument("string2").withLimits("jake","jim"))
+                    .putWrongArgs(new PointLeaf("ignored",(sender, args) -> {
+                        sender.sendMessage("Usage: /args0value <string1> <jake/jim>");
+                        return true;
+                    }))
+            )
             .putWrongArgs(new PointLeaf("ignored",(sender, args) -> {
                 sender.sendMessage("ACommandTest - Commands");
                 sender.sendMessage("/ballsack args0hello");
                 sender.sendMessage("/ballsack args0split args1<cheese/cow>");
+                sender.sendMessage("/ballsack args0value <string1> <jake/jim>");
                 return true;
             }));
 
@@ -47,7 +62,7 @@ public class ACommandTest extends AMapExecutor {
 
     @Override
     public int getMaxArgs() {
-        return 2;
+        return 4;
     }
 
     @Override
@@ -99,7 +114,7 @@ public class ACommandTest extends AMapExecutor {
     }
 
     @Override
-    public NewLeafMap onCommandMap() {
+    public LeafMap onCommandMap() {
         return map;
     }
 }

@@ -1,20 +1,24 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
-import com.elytraforce.aUtils.core.command.ACommandSender;
-import com.elytraforce.aUtils.core.command.model.ActionHandler;
+import com.elytraforce.aUtils.core.command.map.LeafMap;
+import com.elytraforce.aUtils.core.command.model.Leaf;
+import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import org.apache.commons.lang.Validate;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 
-public class SplitLeaf extends Leaf {
+public class SplitLeaf implements Leaf {
+
+    private int position;
+    private String identifier;
 
     private LinkedHashSet<Leaf> subset = new LinkedHashSet<>();
     private PointLeaf wrongArgsAction;
 
     public SplitLeaf(String identifier) {
-        super(identifier);
+        this.identifier = identifier;
 
         subset = new LinkedHashSet<>();
     }
@@ -37,35 +41,38 @@ public class SplitLeaf extends Leaf {
     }
 
     @Override
-    public ActionHandler getActionHandler(String[] args) {
-        //position is THIS object's position, therefore the arg getter should represent what comes IN FRONT
+    public ActablePointLeaf getPointingLeaf(String[] args) {
+        if (args.length < position + 2) {
+            return wrongArgsAction;
+        }
+
         ArrayList<Leaf> leaflet = copyPartialMatches(args[position + 1],subset,new ArrayList<>());
 
-        if (leaflet.isEmpty()) { return wrongArgsAction.getActionHandler(args); }
-        return leaflet.get(0).getActionHandler(args);
+        if (leaflet.isEmpty()) { return wrongArgsAction; }
+        return leaflet.get(0).getPointingLeaf(args);
     }
 
-    public void cum(Consumer<String> cum) {
-        cum.accept("bruh");
-    }
-
-    public void shit() {
-        cum(cum -> {
-            System.gc();//shit
-        });
-    }
-
-    public void register(int positionSuper, LinkedHashMap<Integer, LinkedHashSet<Leaf>> map) {
-        this.position = positionSuper + 1;
-
-        map.computeIfAbsent(position, k -> new LinkedHashSet<>()).add(this);
+    public void register(int positionSuper, LeafMap map) {
+        int pos = map.registerInternal(positionSuper,this);
 
         subset.forEach(leaf -> {
-            leaf.register(position,map);
+            leaf.register(pos,map);
         });
+    }
 
+    @Override
+    public String getIdentifier() {
+        return this.identifier;
+    }
 
-        //we also need to register all furthers
+    @Override
+    public void setPosition(int num) {
+        this.position = num;
+    }
+
+    @Override
+    public Integer getPosition() {
+        return position;
     }
 
     private <T extends Collection<? super Leaf>> T copyPartialMatches(final String token, final Collection<Leaf> originals, final T collection) throws UnsupportedOperationException, IllegalArgumentException {

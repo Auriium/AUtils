@@ -45,4 +45,9 @@ public class SpigotSenderWrapper implements ACommandSender{
         sender.sendMessage(string);
         return;
     }
+
+    public Player castToPlayer() {
+        if (isConsole()) throw new IllegalStateException("The sender you tried to cast was a wrapper!");
+        return (Player) sender;
+    }
 }
