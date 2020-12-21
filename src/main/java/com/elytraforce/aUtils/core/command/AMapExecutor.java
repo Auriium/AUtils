@@ -19,11 +19,6 @@ public abstract class AMapExecutor extends ACommandExecutor {
     }
 
     @Override
-    public void onIncorrectUsage(ACommandSender sender) {
-        sender.sendMessage(chat.colorString(getPrefix() + "&cIncorrect usage! Usage: &7" + getUsage()));
-    }
-
-    @Override
     public void onIncorrectPermission(ACommandSender sender) {
         sender.sendMessage(chat.colorString(getPrefix() + "&cIncorrect permissions!"));
     }

@@ -4,21 +4,19 @@ import com.elytraforce.aUtils.core.command.map.LeafMap;
 
 public interface Leaf {
 
-    //TODO: move setpos into the builder, position should be final
+    //TODO: Maybe position needs to be defined in the constructor / constructor based leaf
     public String getIdentifier();
-    public void setPosition(int num);
     public Integer getPosition();
 
     public ActablePointLeaf getPointingLeaf(String[] args);
 
-    public void register(int positionSuper, LeafMap map);
+    public interface Builder<LeafType extends Leaf> {
 
-    public abstract static class  Builder<LeafType extends Leaf> {
+        public void setPosition(int num);
 
-        protected int position;
-        protected String identifier;
-
-        public abstract <T extends Leaf> T build();
+        //leaves are built on registering / putting / adding
+        public LeafType build();
+        public Leaf register(int positionSuper, LeafMap map);
 
     }
 

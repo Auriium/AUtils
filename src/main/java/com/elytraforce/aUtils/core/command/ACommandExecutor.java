@@ -6,13 +6,8 @@ import java.util.List;
  * Represents a simple command with handling for incorrect usage and arg counts.
  */
 public abstract class ACommandExecutor implements ACommand {
-
-    public abstract int getMinArgs();
-    public abstract int getMaxArgs();
-
     public abstract boolean isConsoleAccessible();
 
-    public abstract void onIncorrectUsage(ACommandSender sender);
     public abstract void onIncorrectPermission(ACommandSender sender);
     public abstract void onIncorrectExecutor(ACommandSender sender);
 
@@ -29,11 +24,6 @@ public abstract class ACommandExecutor implements ACommand {
 
         if (!sender.hasPermission(getPermission())) {
             onIncorrectPermission(sender);
-            return false;
-        }
-
-        if (args.length > getMaxArgs() || args.length < getMinArgs()) {
-            onIncorrectUsage(sender);
             return false;
         }
 

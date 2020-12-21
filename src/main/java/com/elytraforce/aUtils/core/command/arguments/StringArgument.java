@@ -2,6 +2,7 @@ package com.elytraforce.aUtils.core.command.arguments;
 
 import java.util.*;
 
+//TODO: more fucking builders (make a specific argbuilder)
 public class StringArgument extends Argument<String> {
 
     private LinkedHashSet<String> limited;
@@ -21,6 +22,11 @@ public class StringArgument extends Argument<String> {
 
     public StringArgument withLimits(String... strings) {
         this.limited.addAll(Arrays.asList(strings));
+        return this;
+    }
+
+    public StringArgument withDefault(String string) {
+        this.defaultT = string;
         return this;
     }
 
@@ -46,5 +52,15 @@ public class StringArgument extends Argument<String> {
     @Override
     public String parse(String string) {
         return string;
+    }
+
+    @Override
+    public boolean isOptional() {
+        return this.defaultT != null;
+    }
+
+    @Override
+    public String getDefault() {
+        return this.defaultT;
     }
 }

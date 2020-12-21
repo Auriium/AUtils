@@ -7,14 +7,14 @@ import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 
 public class PointLeaf implements ActablePointLeaf {
 
-    private int position;
-    private String identifier;
+    private final int position;
+    private final String identifier;
 
-    private ActionHandler handler;
+    private final ActionHandler handler;
 
-    public PointLeaf(String identifier, ActionHandler handler) {
+    private PointLeaf(int position, String identifier, ActionHandler handler) {
         this.identifier = identifier;
-
+        this.position = position;
         this.handler = handler;
     }
 
@@ -34,36 +34,39 @@ public class PointLeaf implements ActablePointLeaf {
     }
 
     @Override
-    public void setPosition(int num) {
-        this.position = num;
-    }
-
-    @Override
     public Integer getPosition() {
         return position;
     }
 
-    //TODO: move this to the builder, make abstract builder abstract register. this would NOT
-    //TODO: be build with stackstyle returning PointLeaf, but instead will return void and
-    //TODO: only be called by the leafmap
+    public static class Builder implements Leaf.Builder<PointLeaf> {
 
-    public void register(int positionSuper, LeafMap map) {
-        map.registerInternal(positionSuper,this);
-    }
+        private ActionHandler handler;
+        private String identifier;
+        private int position;
 
-    public static class Builder extends Leaf.Builder<PointLeaf> {
-
-
-
-        public void register(int positionSuper, LeafMap map) {
-            //map.registerInternal(positionSuper,this);
+        private Builder(String id, ActionHandler handler) {
+            this.identifier = id;
+            this.handler = handler;
+            this.position = 0;
         }
 
-        //public
+        @Override
+        public Leaf register(int positionSuper, LeafMap map) {
+            return map.registerInternal(positionSuper,this);
+        }
 
         @Override
-        public <T extends Leaf> T build() {
-            return null;
+        public void setPosition(int num) {
+            this.position = num;
+        }
+
+        public static PointLeaf.Builder init(String id, ActionHandler handle) {
+            return new PointLeaf.Builder(id,handle);
+        }
+
+        @Override
+        public PointLeaf build() {
+            return new PointLeaf(position,identifier,handler);
         }
     }
 }

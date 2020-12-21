@@ -1,37 +1,43 @@
 package com.elytraforce.aUtils.core.command.map;
 
 import com.elytraforce.aUtils.core.command.ACommandSender;
-import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
+import com.elytraforce.aUtils.core.command.model.Leaf;
 import org.apache.commons.lang.Validate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 public class LeafMap {
 
     private PointLeaf wrongArgsAction;
     private LinkedHashMap<Integer, LinkedHashSet<Leaf>> actions = new LinkedHashMap<>();
 
-    public LeafMap put(Leaf leaf) {
-        int position = -1; //-1 represents that this is positioned inside the command
-        //e.g. position 0 representing argument 1, -1 represents noarg
-        leaf.register(position,this);
+    public LeafMap put(Leaf.Builder<? extends Leaf> builder) {
+        builder.register(-1,this);
 
         return this;
     }
 
-    public LeafMap putWrongArgs(PointLeaf leaf) {
-        this.wrongArgsAction = leaf;
+    public Leaf registerInternal(int position, Leaf.Builder<? extends Leaf> builder) {
+        int pos = position + 1;
+
+        builder.setPosition(position);
+
+        Leaf leaf = builder.build();
+        actions.computeIfAbsent(pos, k -> new LinkedHashSet<>()).add(leaf);
+
+        return leaf;
+    }
+
+    public LeafMap putWrongArgs(PointLeaf.Builder leaf) {
+        this.wrongArgsAction = leaf.build();
         return this;
     }
 
     //the wrongargs is also added as an argument
-    public LeafMap defaultWrongArgs(PointLeaf leaf) {
-        this.wrongArgsAction = leaf;
+    public LeafMap defaultWrongArgs(PointLeaf.Builder leaf) {
+        this.wrongArgsAction = leaf.build();
         this.put(leaf);
         return this;
     }
@@ -75,13 +81,12 @@ public class LeafMap {
         return string.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
-    public int registerInternal(int position, Leaf leaf) {
-        int pos = position + 1;
+    public int getMinArgs() {
+        return Collections.max(actions.keySet()) + 1;
+    }
 
-        leaf.setPosition(pos);
-        actions.computeIfAbsent(pos, k -> new LinkedHashSet<>()).add(leaf);
-
-        return pos;
+    public int getMaxArgs() {
+        return 0;
     }
 
 }

@@ -16,7 +16,7 @@ public class CommandTest extends Command implements TabExecutor {
     public ConfigTest config;
 
     @Inject
-    protected CommandTest(@NotNull String name, ConfigTest config) {
+    public CommandTest(@NotNull String name, ConfigTest config) {
         super(name);
     }
 

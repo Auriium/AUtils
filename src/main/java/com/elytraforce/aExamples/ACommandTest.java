@@ -22,32 +22,32 @@ public class ACommandTest extends AMapExecutor {
     @Inject private AChat chat;
 
     private LeafMap map = new LeafMap()
-            .put(new PointLeaf("args0hello",(sender, args) -> {
-                sender.sendMessage("i like dog");
+            .put(PointLeaf.Builder.init("args0hello",(sender,args) -> {
+                sender.sendMessage("hi");
                 return true;
             }))
-            .put(new SplitLeaf("args0split")
-                    .put(new PointLeaf("args1cheese",(sender, args) -> {
-                        sender.sendMessage("did you know humans are made of cow");
-                        return true;
-                    }))
-                    .defaultWrongArgs(new PointLeaf("args1cow",(sender, args) -> {
-                        sender.sendMessage("loud screaming noises from " + args[0]);
-                        return true;
-                    })))
-            .put(new ValueableLeaf("args0value",(sender, args) -> {
-                    sender.sendMessage(args.getString("string1"));
-                    sender.sendMessage(args.getString("string2"));
+            .put(SplitLeaf.Builder.init("args0split")
+                .put(PointLeaf.Builder.init("args1cheese",(sender,args) -> {
+                    sender.sendMessage("loud screaming noises from " + args[0]);
                     return true;
-                    })
-                    .argument(new StringArgument("string1"))
-                    .argument(new StringArgument("string2").withLimits("jake","jim"))
-                    .putWrongArgs(new PointLeaf("ignored",(sender, args) -> {
-                        sender.sendMessage("Usage: /args0value <string1> <jake/jim>");
-                        return true;
-                    }))
+                }))
+                .putWrongArgs(PointLeaf.Builder.init("args1cow",(sender,args) -> {
+                    sender.sendMessage("did you know humans are made of cow");
+                    return true;
+                }))
             )
-            .putWrongArgs(new PointLeaf("ignored",(sender, args) -> {
+            .put(ValueableLeaf.Builder.init("args0value",(sender,args) -> {
+                sender.sendMessage(args.getString("string1") + " " + args.getString("string2"));
+                return true;
+            })
+                .argument(new StringArgument("string1"))
+                .argument(new StringArgument("string2").withLimits("jake","jim").withDefault("jim"))
+                .setWrongArgs(PointLeaf.Builder.init("ignored",(sender,args) -> {
+
+                    return true;
+                }))
+            )
+            .defaultWrongArgs(PointLeaf.Builder.init("ignored", (sender,args) -> {
                 sender.sendMessage("ACommandTest - Commands");
                 sender.sendMessage("/ballsack args0hello");
                 sender.sendMessage("/ballsack args0split args1<cheese/cow>");
@@ -55,15 +55,6 @@ public class ACommandTest extends AMapExecutor {
                 return true;
             }));
 
-    @Override
-    public int getMinArgs() {
-        return 0;
-    }
-
-    @Override
-    public int getMaxArgs() {
-        return 4;
-    }
 
     @Override
     public String getPrefix() {

@@ -6,6 +6,7 @@ public abstract class Argument<T> {
 
     protected String identifier;
     protected int position;
+    protected T defaultT;
 
     protected Argument(String identifier) {
         this.identifier = identifier;
@@ -17,7 +18,6 @@ public abstract class Argument<T> {
     public int getPosition() {
         return this.position;
     }
-
     public void setPosition(int num) {this.position = num; }
 
     //this always needs to return string, it's the tabcomplete thing
@@ -25,5 +25,7 @@ public abstract class Argument<T> {
 
     public abstract boolean check(String toParse);
     public abstract T parse(String string);
+    public abstract boolean isOptional();
+    public abstract T getDefault();
 
 }
