@@ -2,6 +2,8 @@ package com.elytraforce.aUtils.core.command.model;
 
 import com.elytraforce.aUtils.core.command.map.LeafMap;
 
+import java.util.List;
+
 public interface Leaf {
 
     //TODO: Maybe position needs to be defined in the constructor / constructor based leaf
@@ -9,6 +11,7 @@ public interface Leaf {
     public Integer getPosition();
 
     public ActablePointLeaf getPointingLeaf(String[] args);
+    public List<String> getBasedOnPosition(int currentPosition,String currentString);
 
     public interface Builder<LeafType extends Leaf> {
 

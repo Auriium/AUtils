@@ -2,7 +2,6 @@ package com.elytraforce.aUtils.core.command;
 
 import com.elytraforce.aUtils.core.chat.AChat;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
-import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.google.inject.Inject;
 
 import java.util.List;
@@ -30,7 +29,7 @@ public abstract class AMapExecutor extends ACommandExecutor {
 
     @Override
     public List<String> onTabComplete(ACommandSender sender, String[] args) {
-        return onTabMap(sender,args).getIntelligent(args);
+        return onCommandMap().getTabcomplete(sender, args);
     }
 
     @Override
@@ -38,7 +37,6 @@ public abstract class AMapExecutor extends ACommandExecutor {
         return onCommandMap().runActionFromArgs(sender, args);
     }
 
-    public abstract TabMap onTabMap(ACommandSender sender, String[] args);
     public abstract LeafMap onCommandMap();
 
 }

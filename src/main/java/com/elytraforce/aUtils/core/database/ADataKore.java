@@ -5,7 +5,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.apache.ibatis.jdbc.ScriptRunner;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -134,7 +133,7 @@ public class ADataKore {
                     databaseSchema);
             InputStream schema = new SequenceInputStream(Collections.enumeration(streams));
 
-            ScriptRunner runner = new ScriptRunner(connection);
+            IbatisScriptRunner runner = new IbatisScriptRunner(connection);
             runner.setLogWriter(null);
             runner.runScript(new InputStreamReader(schema));
         }

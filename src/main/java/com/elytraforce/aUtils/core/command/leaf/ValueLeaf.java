@@ -6,7 +6,9 @@ import com.elytraforce.aUtils.core.command.arguments.Arguments;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.model.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class ValueLeaf implements ActablePointLeaf {
 
@@ -54,6 +56,11 @@ public class ValueLeaf implements ActablePointLeaf {
     @Override
     public ActablePointLeaf getPointingLeaf(String[] args) {
         return this;
+    }
+
+    @Override
+    public List<String> getBasedOnPosition(int currentPosition, String currentString) {
+        return new ArrayList<>();
     }
 
     public ActionHandler getActionHandlerWithArguments(Arguments arguments) {

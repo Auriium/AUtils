@@ -9,6 +9,8 @@ import org.apache.commons.lang.Validate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SplitLeaf implements Leaf {
 
@@ -30,10 +32,21 @@ public class SplitLeaf implements Leaf {
             return wrongArgsAction;
         }
 
-        ArrayList<Leaf> leaflet = copyPartialMatches(args[position + 1],subset,new ArrayList<>());
+        List<Leaf> leaflet = copyPartialMatches(args[position + 1],subset);
 
         if (leaflet.isEmpty()) { return wrongArgsAction; }
         return leaflet.get(0).getPointingLeaf(args);
+    }
+
+    @Override
+    public List<String> getBasedOnPosition(int position, String positionString) {
+        List<Leaf> leaflet = copyPartialMatches(positionString,subset);
+        //if we are ONE AHEAD of the position this thing is at
+        if (position <= this.position + 1) {
+            return leaflet.stream().map(Leaf::getIdentifier).collect(Collectors.toList());
+        } else {
+            return leaflet.isEmpty() ? new ArrayList<>() : leaflet.get(0).getBasedOnPosition(position,positionString);
+        }
     }
 
     @Override
@@ -114,24 +127,11 @@ public class SplitLeaf implements Leaf {
 
     }
 
-    private <T extends Collection<? super Leaf>> T copyPartialMatches(final String token, final Collection<Leaf> originals, final T collection) throws UnsupportedOperationException, IllegalArgumentException {
-        Validate.notNull(token, "Search token cannot be null");
-        Validate.notNull(collection, "Collection cannot be null");
-        Validate.notNull(originals, "Originals cannot be null");
-
-        ;
-
-        for (Leaf leaf : originals) {
-            if (startsWithIgnoreCase(leaf.getIdentifier(), token)) {
-                collection.add(leaf);
-            }
-        }
-
-        return collection;
+    private List<Leaf> copyPartialMatches(final String token, final Collection<Leaf> originals) throws UnsupportedOperationException, IllegalArgumentException {
+        return originals.stream().filter(leaf -> startsWithIgnoreCase(leaf.getIdentifier(),token)).collect(Collectors.toList());
     }
 
     private boolean startsWithIgnoreCase(final String string, final String prefix) throws IllegalArgumentException, NullPointerException {
-        Validate.notNull(string, "Cannot check a null string for a match");
         if (string.length() < prefix.length()) {
             return false;
         }

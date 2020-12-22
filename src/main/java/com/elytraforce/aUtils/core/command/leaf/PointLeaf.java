@@ -5,6 +5,10 @@ import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import com.elytraforce.aUtils.core.command.model.ActionHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
+
 public class PointLeaf implements ActablePointLeaf {
 
     private final int position;
@@ -26,6 +30,16 @@ public class PointLeaf implements ActablePointLeaf {
     @Override
     public ActablePointLeaf getPointingLeaf(String[] args) {
         return this;
+    }
+
+    @Override
+    public List<String> getBasedOnPosition(int currentPosition, String currentString) {
+        //if we are AT the position this thing is at
+
+        if (currentPosition <= this.position) {
+            return List.of(this.getIdentifier());
+        }
+        return new ArrayList<>();
     }
 
     @Override

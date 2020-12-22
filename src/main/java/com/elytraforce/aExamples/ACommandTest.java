@@ -1,16 +1,13 @@
 package com.elytraforce.aExamples;
 
 import com.elytraforce.aUtils.core.chat.AChat;
-import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
 import com.elytraforce.aUtils.core.command.arguments.StringArgument;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
-import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ACommandTest extends AMapExecutor {
 
@@ -74,6 +71,19 @@ public class ACommandTest extends AMapExecutor {
                             }).create();
                         }).create();
             })
+            .split("arg0cum",builder -> {
+                return builder
+                        .pointDefaultArgs("arg1sex",builder1 -> {
+                            return builder1.setHandler((player,args) -> {
+                                player.sendMessage("Ran command number 1!");
+                            }).create();
+                        })
+                        .point("arg1flex",builder1 -> {
+                            return builder1.setHandler((player,args) -> {
+                                player.sendMessage("Ran command number 2!");
+                            }).create();
+                        }).create();
+            })
             .value("args0value", builder -> {
                 return builder
                         .argument(new StringArgument("string1"))
@@ -95,17 +105,6 @@ public class ACommandTest extends AMapExecutor {
                     player.sendMessage(chat.colorString("&b/ballcommand &7arg0split <arg1first/arg1second>"));
                 }).createNoPut();
             });
-
-    @Override
-    public TabMap onTabMap(ACommandSender sender, String[] args) {
-        return new TabMap()
-                .add(0, () -> Arrays.asList("ss","vev"))
-                .add(1,new ArrayList<>())
-                .add(2, () -> Arrays.asList("dwd","ewe"))
-                .add(3, () -> Arrays.asList("sad","things"))
-                .add(4,"test","test2");
-
-    }
 
     @Override
     public LeafMap onCommandMap() {

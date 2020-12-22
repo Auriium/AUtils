@@ -5,6 +5,9 @@ import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import com.elytraforce.aUtils.core.command.model.ActionHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //function as placeholders for the tabcomplete
 public class ArgumentWrapperLeaf implements ActablePointLeaf {
 
@@ -39,6 +42,11 @@ public class ArgumentWrapperLeaf implements ActablePointLeaf {
     @Override
     public ActablePointLeaf getPointingLeaf(String[] args) {
         return this;
+    }
+
+    @Override
+    public List<String> getBasedOnPosition(int currentPosition,String currentString) {
+        return new ArrayList<>();
     }
 
     public static class Booder {

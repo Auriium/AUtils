@@ -10,13 +10,14 @@ import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 import org.apache.commons.lang.Validate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LeafMap {
 
     private final static int superPos = -1;
 
     private PointLeaf wrongArgsAction;
-    private LinkedHashMap<Integer, LinkedHashSet<Leaf>> actions = new LinkedHashMap<>();
+    private final LinkedHashMap<Integer, LinkedHashSet<Leaf>> actions = new LinkedHashMap<>();
 
     public LeafMap point(String id, LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
         Leaf leaf = builder.accept(new PointLeaf.Booder(id,superPos,this));
@@ -47,37 +48,6 @@ public class LeafMap {
         actions.computeIfAbsent(leaf.getPosition(), k -> new LinkedHashSet<>()).add(leaf);
     }
 
-
-
-    /*public LeafMap put(Leaf.Builder<? extends Leaf> builder) {
-        builder.register(-1,this);
-
-        return this;
-    }
-
-    public Leaf registerInternal(int position, Leaf.Builder<? extends Leaf> builder) {
-        int pos = position + 1;
-
-        builder.setPosition(position);
-
-        Leaf leaf = builder.build();
-
-
-        return leaf;
-    }*/
-
-    /*public LeafMap putWrongArgs(PointLeaf.Builder leaf) {
-        this.wrongArgsAction = leaf.build();
-        return this;
-    }
-
-    //the wrongargs is also added as an argument
-    public LeafMap defaultWrongArgs(PointLeaf.Builder leaf) {
-        this.wrongArgsAction = leaf.build();
-        this.put(leaf);
-        return this;
-    }*/
-
     public boolean runActionFromArgs(ACommandSender sender, String[] args) {
         getPointingLeaf(args).getActionHandler(args).run(sender, args);
 
@@ -89,30 +59,30 @@ public class LeafMap {
             return wrongArgsAction;
         }
 
-        ArrayList<Leaf> leaflet = copyPartialMatches(args[0],actions.get(0),new ArrayList<>());
+        List<Leaf> leaflet = copyPartialMatches(args[0],actions.get(0));
 
         if (leaflet.isEmpty()) { return wrongArgsAction; }
         return leaflet.get(0).getPointingLeaf(args);
     }
 
-    private <T extends Collection<? super Leaf>> T copyPartialMatches(final String token, final Collection<Leaf> originals, final T collection) throws UnsupportedOperationException, IllegalArgumentException {
-        Validate.notNull(token, "Search token cannot be null");
-        Validate.notNull(collection, "Collection cannot be null");
-        Validate.notNull(originals, "Originals cannot be null");
+    public List<String> getTabcomplete(ACommandSender sender, String[] args) {
+        int currentPosition = args.length - 1;
+        String currentString = args[currentPosition];
 
-        ;
+        List<Leaf> leaflet = copyPartialMatches(args[0],actions.get(0));
 
-        for (Leaf leaf : originals) {
-            if (startsWithIgnoreCase(leaf.getIdentifier(), token)) {
-                collection.add(leaf);
-            }
+        if (currentPosition <= 0) {
+            return leaflet.stream().map(Leaf::getIdentifier).collect(Collectors.toList());
+        } else {
+            return leaflet.isEmpty() ? new ArrayList<>() : leaflet.get(0).getBasedOnPosition(currentPosition,currentString);
         }
+    }
 
-        return collection;
+    private List<Leaf> copyPartialMatches(final String token, final Collection<Leaf> originals) throws UnsupportedOperationException, IllegalArgumentException {
+        return originals.stream().filter(leaf -> startsWithIgnoreCase(leaf.getIdentifier(),token)).collect(Collectors.toList());
     }
 
     private boolean startsWithIgnoreCase(final String string, final String prefix) throws IllegalArgumentException, NullPointerException {
-        Validate.notNull(string, "Cannot check a null string for a match");
         if (string.length() < prefix.length()) {
             return false;
         }
