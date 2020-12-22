@@ -3,10 +3,6 @@ package com.elytraforce.aExamples;
 import com.elytraforce.aUtils.core.chat.AChat;
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
-import com.elytraforce.aUtils.core.command.arguments.StringArgument;
-import com.elytraforce.aUtils.core.command.leaf.SplitLeaf;
-import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
-import com.elytraforce.aUtils.core.command.leaf.ValueableLeaf;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.elytraforce.aUtils.core.logger.ALogger;
@@ -22,38 +18,16 @@ public class ACommandTest extends AMapExecutor {
     @Inject private AChat chat;
 
     private LeafMap map = new LeafMap()
-            .put(PointLeaf.Builder.init("args0hello",(sender,args) -> {
-                sender.sendMessage("hi");
-                return true;
-            }))
-            .put(SplitLeaf.Builder.init("args0split")
-                .put(PointLeaf.Builder.init("args1cheese",(sender,args) -> {
-                    sender.sendMessage("loud screaming noises from " + args[0]);
-                    return true;
-                }))
-                .putWrongArgs(PointLeaf.Builder.init("args1cow",(sender,args) -> {
-                    sender.sendMessage("did you know humans are made of cow");
-                    return true;
-                }))
-            )
-            .put(ValueableLeaf.Builder.init("args0value",(sender,args) -> {
-                sender.sendMessage(args.getString("string1") + " " + args.getString("string2"));
-                return true;
-            })
-                .argument(new StringArgument("string1"))
-                .argument(new StringArgument("string2").withLimits("jake","jim").withDefault("jim"))
-                .setWrongArgs(PointLeaf.Builder.init("ignored",(sender,args) -> {
+            .point("arg0hello",builder -> {
 
+                builder.setHandler((player,args) -> {
+                    player.sendMessage("Hello, player!");
                     return true;
-                }))
-            )
-            .defaultWrongArgs(PointLeaf.Builder.init("ignored", (sender,args) -> {
-                sender.sendMessage("ACommandTest - Commands");
-                sender.sendMessage("/ballsack args0hello");
-                sender.sendMessage("/ballsack args0split args1<cheese/cow>");
-                sender.sendMessage("/ballsack args0value <string1> <jake/jim>");
-                return true;
-            }));
+                });
+
+                return builder.create();
+            });
+
 
 
     @Override

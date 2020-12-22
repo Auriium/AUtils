@@ -1,9 +1,9 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
+import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
-import com.elytraforce.aUtils.core.command.model.ActionHandler;
-import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
+import com.elytraforce.aUtils.core.command.model.ActionHandler;
 
 public class PointLeaf implements ActablePointLeaf {
 
@@ -38,35 +38,48 @@ public class PointLeaf implements ActablePointLeaf {
         return position;
     }
 
-    public static class Builder implements Leaf.Builder<PointLeaf> {
+    public static class Booder {
+
+        private final int position;
 
         private ActionHandler handler;
-        private String identifier;
-        private int position;
+        private final String identifier;
+        private LeafMap builderMap;
 
-        private Builder(String id, ActionHandler handler) {
+        public Booder(String id, int superpos, LeafMap map) {
+            this.position = superpos + 1;
+            this.builderMap = map;
+
+            //todo Defaults below
+            this.handler = new ActionHandler() {
+                @Override
+                public boolean run(ACommandSender sender, String[] args) {
+                    sender.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!");
+                    return true;
+                }
+            };
+
             this.identifier = id;
+        }
+
+        public Booder setHandler(ActionHandler handler) {
             this.handler = handler;
-            this.position = 0;
+            return this;
         }
 
-        @Override
-        public Leaf register(int positionSuper, LeafMap map) {
-            return map.registerInternal(positionSuper,this);
+        public PointLeaf create() {
+            PointLeaf leaf = new PointLeaf(position,identifier,handler);
+
+            builderMap.putInternal(leaf);
+
+            return leaf;
         }
 
-        @Override
-        public void setPosition(int num) {
-            this.position = num;
-        }
-
-        public static PointLeaf.Builder init(String id, ActionHandler handle) {
-            return new PointLeaf.Builder(id,handle);
-        }
-
-        @Override
-        public PointLeaf build() {
+        public PointLeaf createNoPut() {
             return new PointLeaf(position,identifier,handler);
         }
     }
+
+    //supplier needs to supply with a new builder passing position plus one to constructor, then save the builder and send it downrange
+
 }

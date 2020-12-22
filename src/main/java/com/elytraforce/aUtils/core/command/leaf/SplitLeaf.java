@@ -1,8 +1,11 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
+import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
+import com.elytraforce.aUtils.core.command.model.ActionHandler;
 import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
+import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 import org.apache.commons.lang.Validate;
 
 import java.util.ArrayList;
@@ -45,69 +48,72 @@ public class SplitLeaf implements Leaf {
         return position;
     }
 
-    public static class Builder implements Leaf.Builder<SplitLeaf> {
+    public static class Booder {
 
-        private int position;
+        private final int position;
+
         private final String identifier;
-        private final LinkedHashSet<Leaf.Builder<? extends Leaf>> subset;
-        private PointLeaf.Builder wrongArgsAction;
+        private final LeafMap builderMap;
+        private final LinkedHashSet<Leaf> subset;
+        private PointLeaf wrongArgsAction;
 
-        private final LinkedHashSet<Leaf> toPass;
-
-        private Builder(String id) {
+        public Booder(String id, int superpos, LeafMap map) {
+            this.position = superpos + 1;
+            this.builderMap = map;
             this.identifier = id;
-            this.position = 0;
             this.subset = new LinkedHashSet<>();
-            this.wrongArgsAction = PointLeaf.Builder.init("ignored",((sender, args) -> {
-                sender.sendMessage("You have added the wrong arguments! // TODO: replace this");
-
-                return true;
-            })); //TODO: make the wrongArgsAction just relay autoWrongArgsBuilder
-
-            this.toPass = new LinkedHashSet<>();
+            this.wrongArgsAction = new PointLeaf.Booder("ignored",position,map)
+                    .setHandler((p,a) -> { p.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!"); return true; })
+                    .create();
         }
 
-        public SplitLeaf.Builder put(Leaf.Builder<? extends Leaf> builder) {
-            this.subset.add(builder);
+        public Booder point(String id, LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
+            Leaf leaf = builder.accept(new PointLeaf.Booder(id,position,builderMap));
+
+            this.subset.add(leaf);
+
             return this;
         }
 
-        public SplitLeaf.Builder putWrongArgs(PointLeaf.Builder builder) {
-            this.wrongArgsAction = builder;
+        public Booder split(String id, LeafConsumer<SplitLeaf.Booder,SplitLeaf> builder) {
+            Leaf leaf = builder.accept(new SplitLeaf.Booder(id,position,builderMap));
+
+            this.subset.add(leaf);
+
             return this;
         }
 
-        public SplitLeaf.Builder setWrongArgs(PointLeaf.Builder builder) {
-            this.wrongArgsAction = builder;
-            this.put(builder);
+        public Booder value(String id, LeafConsumer<ValueLeaf.Booder,ValueLeaf> builder) {
+            Leaf leaf = builder.accept(new ValueLeaf.Booder(id,position,builderMap));
+
+            this.subset.add(leaf);
+
             return this;
         }
 
-        @Override
-        public Leaf register(int positionSuper, LeafMap map) {
-            int pos = positionSuper + 1;
-            Leaf returned = map.registerInternal(positionSuper,this);
+        public Booder pointWrongArgs(LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
+            wrongArgsAction = builder.accept(new PointLeaf.Booder("ignored",position,builderMap));
 
-            subset.forEach(builder -> {
-                toPass.add(builder.register(pos,map));
-            });
-
-            return returned;
+            return this;
         }
 
-        @Override
-        public void setPosition(int num) {
-            this.position = num;
+        public Booder pointDefaultArgs(String id, LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
+            PointLeaf leaf = builder.accept(new PointLeaf.Booder(id,position,builderMap));
+
+            wrongArgsAction = leaf;
+            this.subset.add(leaf);
+
+            return this;
         }
 
-        public static SplitLeaf.Builder init(String id) {
-            return new SplitLeaf.Builder(id);
+        public SplitLeaf create() {
+            SplitLeaf leaf = new SplitLeaf(position,identifier,subset,wrongArgsAction);
+
+            builderMap.putInternal(leaf);
+
+            return leaf;
         }
 
-        @Override
-        public SplitLeaf build() {
-            return new SplitLeaf(position,identifier,toPass, wrongArgsAction.build());
-        }
     }
 
     private <T extends Collection<? super Leaf>> T copyPartialMatches(final String token, final Collection<Leaf> originals, final T collection) throws UnsupportedOperationException, IllegalArgumentException {

@@ -2,18 +2,54 @@ package com.elytraforce.aUtils.core.command.map;
 
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
+import com.elytraforce.aUtils.core.command.leaf.SplitLeaf;
+import com.elytraforce.aUtils.core.command.leaf.ValueLeaf;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import com.elytraforce.aUtils.core.command.model.Leaf;
+import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 import org.apache.commons.lang.Validate;
 
 import java.util.*;
 
 public class LeafMap {
 
+    private final static int superPos = -1;
+
     private PointLeaf wrongArgsAction;
     private LinkedHashMap<Integer, LinkedHashSet<Leaf>> actions = new LinkedHashMap<>();
 
-    public LeafMap put(Leaf.Builder<? extends Leaf> builder) {
+    public LeafMap point(String id, LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
+        Leaf leaf = builder.accept(new PointLeaf.Booder(id,superPos,this));
+
+        return this;
+    }
+
+    public LeafMap split(String id, LeafConsumer<SplitLeaf.Booder,SplitLeaf> builder) {
+        Leaf leaf = builder.accept(new SplitLeaf.Booder(id,superPos,this));
+
+        return this;
+    }
+
+    public LeafMap value(String id, LeafConsumer<ValueLeaf.Booder,ValueLeaf> builder) {
+        Leaf leaf = builder.accept(new ValueLeaf.Booder(id,superPos,this));
+
+        return this;
+    }
+
+    public LeafMap pointWrongArgs(LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
+
+        wrongArgsAction = builder.accept(new PointLeaf.Booder("ignored",superPos,this));
+        return this;
+
+    }
+
+    public void putInternal(Leaf leaf) {
+        actions.computeIfAbsent(leaf.getPosition(), k -> new LinkedHashSet<>()).add(leaf);
+    }
+
+
+
+    /*public LeafMap put(Leaf.Builder<? extends Leaf> builder) {
         builder.register(-1,this);
 
         return this;
@@ -25,12 +61,12 @@ public class LeafMap {
         builder.setPosition(position);
 
         Leaf leaf = builder.build();
-        actions.computeIfAbsent(pos, k -> new LinkedHashSet<>()).add(leaf);
+
 
         return leaf;
-    }
+    }*/
 
-    public LeafMap putWrongArgs(PointLeaf.Builder leaf) {
+    /*public LeafMap putWrongArgs(PointLeaf.Builder leaf) {
         this.wrongArgsAction = leaf.build();
         return this;
     }
@@ -40,7 +76,7 @@ public class LeafMap {
         this.wrongArgsAction = leaf.build();
         this.put(leaf);
         return this;
-    }
+    }*/
 
     public boolean runActionFromArgs(ACommandSender sender, String[] args) {
         return getPointingLeaf(args).getActionHandler(args).run(sender, args);

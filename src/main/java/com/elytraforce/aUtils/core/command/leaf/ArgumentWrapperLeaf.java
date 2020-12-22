@@ -4,25 +4,26 @@ import com.elytraforce.aUtils.core.command.arguments.Argument;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import com.elytraforce.aUtils.core.command.model.ActionHandler;
-import com.elytraforce.aUtils.core.command.model.Leaf;
 
 //function as placeholders for the tabcomplete
 public class ArgumentWrapperLeaf implements ActablePointLeaf {
 
+    private final ValueLeaf leaf;
     private final String identifier;
     private final int position;
     private final Argument argument;
 
     //TODO take an argument as a value
-    public ArgumentWrapperLeaf(int position, String identifier, Argument argument) {
+    public ArgumentWrapperLeaf(int position, String identifier, Argument argument, ValueLeaf leaf) {
         this.identifier = identifier;
         this.position = position;
         this.argument = argument;
+        this.leaf = leaf;
     }
 
     @Override
     public ActionHandler getActionHandler(String[] args) {
-        return null;
+        return leaf.getActionHandler(args);
     }
 
     @Override
@@ -40,35 +41,29 @@ public class ArgumentWrapperLeaf implements ActablePointLeaf {
         return this;
     }
 
-    public static class Builder implements Leaf.Builder<ArgumentWrapperLeaf> {
+    public static class Booder {
 
+        private final int position;
+
+        private final Argument argument;
         private final String identifier;
-        private int position;
-        private Argument argument;
+        private final LeafMap builderMap;
+        private final ValueLeaf leaf;
 
-        private Builder(String id, Argument argument) {
+        public Booder(String id, int superpos, LeafMap map, Argument arg, ValueLeaf leaf) {
+            this.position = superpos + 1;
+            this.builderMap = map;
             this.identifier = id;
-            this.argument = argument;
-            this.position = 0;
+            this.leaf = leaf;
+            this.argument = arg;
         }
 
-        @Override
-        public Leaf register(int positionSuper, LeafMap map) {
-            return map.registerInternal(positionSuper,this);
-        }
+        public ArgumentWrapperLeaf create() {
+            ArgumentWrapperLeaf wrap = new ArgumentWrapperLeaf(position,identifier,argument,this.leaf);
 
-        @Override
-        public void setPosition(int num) {
-            this.position = num;
-        }
+            builderMap.putInternal(wrap);
 
-        public static ArgumentWrapperLeaf.Builder init(String id, Argument argument) {
-            return new ArgumentWrapperLeaf.Builder(id,argument);
-        }
-
-        @Override
-        public ArgumentWrapperLeaf build() {
-            return new ArgumentWrapperLeaf(position,identifier,argument);
+            return wrap;
         }
     }
 }
