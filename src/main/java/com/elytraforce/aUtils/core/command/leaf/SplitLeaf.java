@@ -1,10 +1,8 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
-import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
-import com.elytraforce.aUtils.core.command.model.ActionHandler;
-import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
+import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 import org.apache.commons.lang.Validate;
 
@@ -63,7 +61,7 @@ public class SplitLeaf implements Leaf {
             this.identifier = id;
             this.subset = new LinkedHashSet<>();
             this.wrongArgsAction = new PointLeaf.Booder("ignored",position,map)
-                    .setHandler((p,a) -> { p.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!"); return true; })
+                    .setHandler((p,a) -> { p.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!"); })
                     .create();
         }
 

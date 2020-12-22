@@ -79,7 +79,9 @@ public class LeafMap {
     }*/
 
     public boolean runActionFromArgs(ACommandSender sender, String[] args) {
-        return getPointingLeaf(args).getActionHandler(args).run(sender, args);
+        getPointingLeaf(args).getActionHandler(args).run(sender, args);
+
+        return true;
     }
 
     public ActablePointLeaf getPointingLeaf(String[] args) {

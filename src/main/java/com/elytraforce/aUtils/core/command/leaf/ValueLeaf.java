@@ -50,6 +50,7 @@ public class ValueLeaf implements ActablePointLeaf {
         return getActionHandlerWithArguments(holder);
     }
 
+    //TODO this needs to point to the correct argument-leaf
     @Override
     public ActablePointLeaf getPointingLeaf(String[] args) {
         return this;
@@ -88,16 +89,15 @@ public class ValueLeaf implements ActablePointLeaf {
             this.identifier = id;
             this.builderMap = map;
             this.wrongArgsAction = new PointLeaf.Booder("ignored",position,map)
-                    .setHandler((p,a) -> { p.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!"); return true; })
+                    .setHandler((p,a) -> { p.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!"); })
                     .create();
 
             this.subset = new LinkedHashMap<>();
 
             this.handler = new ArgumentHandler() {
                 @Override
-                public boolean run(ACommandSender sender, Arguments args) {
+                public void run(ACommandSender sender, Arguments args) {
                     sender.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!");
-                    return true;
                 }
             };
         }

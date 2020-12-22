@@ -53,9 +53,8 @@ public class PointLeaf implements ActablePointLeaf {
             //todo Defaults below
             this.handler = new ActionHandler() {
                 @Override
-                public boolean run(ACommandSender sender, String[] args) {
+                public void run(ACommandSender sender, String[] args) {
                     sender.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!");
-                    return true;
                 }
             };
 

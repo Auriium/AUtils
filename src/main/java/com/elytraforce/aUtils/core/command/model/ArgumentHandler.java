@@ -6,6 +6,6 @@ import com.elytraforce.aUtils.core.command.arguments.Arguments;
 @FunctionalInterface
 public interface ArgumentHandler {
 
-    public boolean run(ACommandSender sender, Arguments args);
+    public void run(ACommandSender sender, Arguments args);
 
 }

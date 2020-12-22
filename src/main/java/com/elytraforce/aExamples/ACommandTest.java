@@ -3,6 +3,7 @@ package com.elytraforce.aExamples;
 import com.elytraforce.aUtils.core.chat.AChat;
 import com.elytraforce.aUtils.core.command.ACommandSender;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
+import com.elytraforce.aUtils.core.command.arguments.StringArgument;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.map.TabMap;
 import com.elytraforce.aUtils.core.logger.ALogger;
@@ -16,19 +17,6 @@ public class ACommandTest extends AMapExecutor {
     @Inject private ConfigTest config;
     @Inject private ALogger logger;
     @Inject private AChat chat;
-
-    private LeafMap map = new LeafMap()
-            .point("arg0hello",builder -> {
-
-                builder.setHandler((player,args) -> {
-                    player.sendMessage("Hello, player!");
-                    return true;
-                });
-
-                return builder.create();
-            });
-
-
 
     @Override
     public String getPrefix() {
@@ -66,6 +54,47 @@ public class ACommandTest extends AMapExecutor {
     public String getDescription() {
         return "cool command that you can use";
     }
+
+    private LeafMap map = new LeafMap()
+            .point("arg0hello",builder -> {
+                return builder.setHandler((player,args) -> {
+                    player.sendMessage("Hello, player!");
+                }).create();
+            })
+            .split("arg0split",builder -> {
+                return builder
+                        .pointDefaultArgs("arg1first",builder1 -> {
+                            return builder1.setHandler((player,args) -> {
+                                player.sendMessage("Ran command number 1!");
+                            }).create();
+                        })
+                        .point("arg1second",builder1 -> {
+                            return builder1.setHandler((player,args) -> {
+                                player.sendMessage("Ran command number 2!");
+                            }).create();
+                        }).create();
+            })
+            .value("args0value", builder -> {
+                return builder
+                        .argument(new StringArgument("string1"))
+                        .argument(new StringArgument("string2").withLimits("john","nipple").withDefault("john"))
+                        .setHandler((player,args) -> {
+                            player.sendMessage("You chose " + args.getString("string1") + "" + args.getString("string2"));
+                        })
+                        .pointWrongArgs(builder1 -> {
+                            return builder1.setHandler((player,arg) -> {
+                                player.sendMessage(chat.colorString("&cIncorrect Usage! &7Usage: /args0value <String> <john/nipple>"));
+                            }).createNoPut();
+                        }).create();
+            })
+            .pointWrongArgs(builder -> {
+                return builder.setHandler((player,args) -> {
+                    player.sendMessage(chat.colorString("&7&m---------&f<&bPlugin&9Test&f>&7&m---------"));
+                    player.sendMessage(chat.colorString(""));
+                    player.sendMessage(chat.colorString("&b/ballcommand &7arg0hello"));
+                    player.sendMessage(chat.colorString("&b/ballcommand &7arg0split <arg1first/arg1second>"));
+                }).createNoPut();
+            });
 
     @Override
     public TabMap onTabMap(ACommandSender sender, String[] args) {
