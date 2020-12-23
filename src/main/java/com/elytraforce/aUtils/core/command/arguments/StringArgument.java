@@ -5,14 +5,21 @@ import com.google.common.collect.ImmutableList;
 import java.util.*;
 
 //TODO: more fucking builders (make a specific argbuilder)
-public class StringArgument extends Argument<String> {
+public class StringArgument implements Argument<String> {
+
+    private String identifier;
+    private String defaultT;
 
     private LinkedHashSet<String> limited;
 
     public StringArgument(String identifier) {
-        super(identifier);
+        this.identifier = identifier;
         this.limited = new LinkedHashSet<>();
+    }
 
+    @Override
+    public String getIdentifier() {
+        return this.identifier;
     }
 
     public StringArgument withLimits(Collection<String> collection) {
@@ -58,7 +65,6 @@ public class StringArgument extends Argument<String> {
     public boolean isOptional() {
         return this.defaultT != null;
     }
-
     @Override
     public String getDefault() {
         return this.defaultT;
