@@ -2,6 +2,7 @@ package com.elytraforce.aUtils.core.util;
 
 import com.elytraforce.aUtils.bungee.BungeePlugin;
 import com.elytraforce.aUtils.bungee.chat.BungeeChat;
+import com.elytraforce.aUtils.bungee.command.BungeeCommandProvider;
 import com.elytraforce.aUtils.bungee.config.BungeeConfigProvider;
 import com.elytraforce.aUtils.bungee.logger.BungeeLogger;
 import com.elytraforce.aUtils.core.chat.AChat;
@@ -57,6 +58,7 @@ public abstract class ABinder extends AbstractModule {
             this.bind(ALogger.class).to(BungeeLogger.class);
             this.bind(AChat.class).to(BungeeChat.class);
             this.bind(AConfigProvider.class).to(BungeeConfigProvider.class);
+            this.bind(ACommandManager.class).to(BungeeCommandProvider.class);
         } else {
             throw new IllegalArgumentException("Your plugin is not an spigot or bungee plugin! Please extend ABinder instead!");
         }
