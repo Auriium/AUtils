@@ -8,15 +8,15 @@ import java.util.List;
 public abstract class ACommandExecutor implements ACommand {
     public abstract boolean isConsoleAccessible();
 
-    public abstract void onIncorrectPermission(ACommandSender sender);
-    public abstract void onIncorrectExecutor(ACommandSender sender);
+    public abstract void onIncorrectPermission(ASenderWrapper sender);
+    public abstract void onIncorrectExecutor(ASenderWrapper sender);
 
-    public abstract boolean onCommand(ACommandSender sender, String[] args);
-    public abstract List<String> onTabComplete(ACommandSender sender, String[] args);
+    public abstract boolean onCommand(ASenderWrapper sender, String[] args);
+    public abstract List<String> onTabComplete(ASenderWrapper sender, String[] args);
 
 
     @Override
-    public boolean execute(ACommandSender sender, String[] args) {
+    public boolean execute(ASenderWrapper sender, String[] args) {
         if (sender.isConsole() && !isConsoleAccessible()) {
             onIncorrectExecutor(sender);
             return false;
@@ -31,7 +31,7 @@ public abstract class ACommandExecutor implements ACommand {
     }
 
     @Override
-    public List<String> executeTab(ACommandSender sender, String[] args) {
+    public List<String> executeTab(ASenderWrapper sender, String[] args) {
         return onTabComplete(sender,args);
     }
 

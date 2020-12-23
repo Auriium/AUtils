@@ -4,12 +4,8 @@ import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.model.LeafConsumer;
-import org.apache.commons.lang.Validate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SplitLeaf implements Leaf {
@@ -39,13 +35,18 @@ public class SplitLeaf implements Leaf {
     }
 
     @Override
-    public List<String> getBasedOnPosition(int position, String positionString) {
-        List<Leaf> leaflet = copyPartialMatches(positionString,subset);
-        //if we are ONE AHEAD of the position this thing is at
-        if (position <= this.position + 1) {
+    public List<String> getBasedOnPosition(int position, String[] stringArray) {
+        int ahead = this.position + 1;
+        List<Leaf> leaflet = copyPartialMatches(stringArray[ahead],subset);
+        //if we are ONE AHEAD of the position this thing is at 2 <= 1
+        if (position == ahead) {
             return leaflet.stream().map(Leaf::getIdentifier).collect(Collectors.toList());
         } else {
-            return leaflet.isEmpty() ? new ArrayList<>() : leaflet.get(0).getBasedOnPosition(position,positionString);
+            if (leaflet.isEmpty()) {
+                return new ArrayList<>();
+            } else {
+                return leaflet.get(0).getBasedOnPosition(position,stringArray);
+            }
         }
     }
 
@@ -59,7 +60,18 @@ public class SplitLeaf implements Leaf {
         return position;
     }
 
-    public static class Booder {
+    private List<Leaf> copyPartialMatches(final String token, final Collection<Leaf> originals) throws UnsupportedOperationException, IllegalArgumentException {
+        return originals.stream().filter(leaf -> startsWithIgnoreCase(leaf.getIdentifier(),token)).collect(Collectors.toList());
+    }
+
+    private boolean startsWithIgnoreCase(final String string, final String prefix) throws IllegalArgumentException, NullPointerException {
+        if (string.length() < prefix.length()) {
+            return false;
+        }
+        return string.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    public static class Builder {
 
         private final int position;
 
@@ -68,48 +80,48 @@ public class SplitLeaf implements Leaf {
         private final LinkedHashSet<Leaf> subset;
         private PointLeaf wrongArgsAction;
 
-        public Booder(String id, int superpos, LeafMap map) {
+        public Builder(String id, int superpos, LeafMap map) {
             this.position = superpos + 1;
             this.builderMap = map;
             this.identifier = id;
             this.subset = new LinkedHashSet<>();
-            this.wrongArgsAction = new PointLeaf.Booder("ignored",position,map)
+            this.wrongArgsAction = new PointLeaf.Builder("ignored",position,map)
                     .setHandler((p,a) -> { p.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!"); })
                     .create();
         }
 
-        public Booder point(String id, LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
-            Leaf leaf = builder.accept(new PointLeaf.Booder(id,position,builderMap));
+        public Builder point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
+            Leaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap));
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Booder split(String id, LeafConsumer<SplitLeaf.Booder,SplitLeaf> builder) {
-            Leaf leaf = builder.accept(new SplitLeaf.Booder(id,position,builderMap));
+        public Builder split(String id, LeafConsumer<Builder,SplitLeaf> builder) {
+            Leaf leaf = builder.accept(new Builder(id,position,builderMap));
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Booder value(String id, LeafConsumer<ValueLeaf.Booder,ValueLeaf> builder) {
-            Leaf leaf = builder.accept(new ValueLeaf.Booder(id,position,builderMap));
+        public Builder value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf> builder) {
+            Leaf leaf = builder.accept(new ValueLeaf.Builder(id,position,builderMap));
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Booder pointWrongArgs(LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
-            wrongArgsAction = builder.accept(new PointLeaf.Booder("ignored",position,builderMap));
+        public Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
+            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap));
 
             return this;
         }
 
-        public Booder pointDefaultArgs(String id, LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
-            PointLeaf leaf = builder.accept(new PointLeaf.Booder(id,position,builderMap));
+        public Builder pointDefaultArgs(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
+            PointLeaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap));
 
             wrongArgsAction = leaf;
             this.subset.add(leaf);
@@ -124,17 +136,7 @@ public class SplitLeaf implements Leaf {
 
             return leaf;
         }
-
     }
 
-    private List<Leaf> copyPartialMatches(final String token, final Collection<Leaf> originals) throws UnsupportedOperationException, IllegalArgumentException {
-        return originals.stream().filter(leaf -> startsWithIgnoreCase(leaf.getIdentifier(),token)).collect(Collectors.toList());
-    }
 
-    private boolean startsWithIgnoreCase(final String string, final String prefix) throws IllegalArgumentException, NullPointerException {
-        if (string.length() < prefix.length()) {
-            return false;
-        }
-        return string.regionMatches(true, 0, prefix, 0, prefix.length());
-    }
 }

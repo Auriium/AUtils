@@ -1,13 +1,12 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
-import com.elytraforce.aUtils.core.command.ACommandSender;
+import com.elytraforce.aUtils.core.command.ASenderWrapper;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import com.elytraforce.aUtils.core.command.model.ActionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 public class PointLeaf implements ActablePointLeaf {
 
@@ -33,12 +32,7 @@ public class PointLeaf implements ActablePointLeaf {
     }
 
     @Override
-    public List<String> getBasedOnPosition(int currentPosition, String currentString) {
-        //if we are AT the position this thing is at
-
-        if (currentPosition <= this.position) {
-            return List.of(this.getIdentifier());
-        }
+    public List<String> getBasedOnPosition(int currentPosition, String[] stringArray) {
         return new ArrayList<>();
     }
 
@@ -52,7 +46,7 @@ public class PointLeaf implements ActablePointLeaf {
         return position;
     }
 
-    public static class Booder {
+    public static class Builder {
 
         private final int position;
 
@@ -60,14 +54,14 @@ public class PointLeaf implements ActablePointLeaf {
         private final String identifier;
         private LeafMap builderMap;
 
-        public Booder(String id, int superpos, LeafMap map) {
+        public Builder(String id, int superpos, LeafMap map) {
             this.position = superpos + 1;
             this.builderMap = map;
 
             //todo Defaults below
             this.handler = new ActionHandler() {
                 @Override
-                public void run(ACommandSender sender, String[] args) {
+                public void run(ASenderWrapper sender, String[] args) {
                     sender.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!");
                 }
             };
@@ -75,7 +69,7 @@ public class PointLeaf implements ActablePointLeaf {
             this.identifier = id;
         }
 
-        public Booder setHandler(ActionHandler handler) {
+        public Builder setHandler(ActionHandler handler) {
             this.handler = handler;
             return this;
         }

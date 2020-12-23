@@ -1,6 +1,7 @@
 package com.elytraforce.aExamples;
 
 import com.elytraforce.aUtils.core.chat.AChat;
+import com.elytraforce.aUtils.core.command.ASenderWrapper;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
 import com.elytraforce.aUtils.core.command.arguments.StringArgument;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
@@ -14,11 +15,6 @@ public class ACommandTest extends AMapExecutor {
     @Inject private ConfigTest config;
     @Inject private ALogger logger;
     @Inject private AChat chat;
-
-    @Override
-    public String getPrefix() {
-        return "&9&lPlugin&f&lTest &7>> &r";
-    }
 
     @Override
     public boolean isConsoleAccessible() {
@@ -60,16 +56,23 @@ public class ACommandTest extends AMapExecutor {
             })
             .split("arg0split",builder -> {
                 return builder
-                        .pointDefaultArgs("arg1first",builder1 -> {
-                            return builder1.setHandler((player,args) -> {
+                        .pointDefaultArgs("arg1first",builder1 ->
+                            builder1.setHandler((player, args) -> {
                                 player.sendMessage("Ran command number 1!");
-                            }).create();
-                        })
-                        .point("arg1second",builder1 -> {
-                            return builder1.setHandler((player,args) -> {
+                            }).create()
+                        )
+                        .point("arg1second",builder1 ->
+                            builder1.setHandler((player,args) -> {
                                 player.sendMessage("Ran command number 2!");
-                            }).create();
-                        }).create();
+                            }).create()
+                        )
+                        .value("arg1val", builder1 ->
+                            builder1
+                            .argument(new StringArgument("cum_type"))
+                            .setHandler((sender,args) -> {
+                                sender.sendMessage("You have the nice color of " + args.getString("cum_type"));
+                            }).create()
+                        ).create();
             })
             .split("arg0cum",builder -> {
                 return builder
@@ -109,5 +112,15 @@ public class ACommandTest extends AMapExecutor {
     @Override
     public LeafMap onCommandMap() {
         return map;
+    }
+
+    @Override
+    public void onIncorrectPermission(ASenderWrapper sender) {
+        return;
+    }
+
+    @Override
+    public void onIncorrectExecutor(ASenderWrapper sender) {
+
     }
 }

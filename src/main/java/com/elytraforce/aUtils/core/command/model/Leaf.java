@@ -11,7 +11,7 @@ public interface Leaf {
     public Integer getPosition();
 
     public ActablePointLeaf getPointingLeaf(String[] args);
-    public List<String> getBasedOnPosition(int currentPosition,String currentString);
+    public List<String> getBasedOnPosition(int currentPosition,String[] stringArray);
 
     public interface Builder<LeafType extends Leaf> {
 

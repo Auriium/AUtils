@@ -1,10 +1,10 @@
 package com.elytraforce.aUtils.core.command.model;
 
-import com.elytraforce.aUtils.core.command.ACommandSender;
+import com.elytraforce.aUtils.core.command.ASenderWrapper;
 
 @FunctionalInterface
 public interface ActionHandler {
 
-    public void run(ACommandSender sender, String[] args);
+    public void run(ASenderWrapper sender, String[] args);
 
 }

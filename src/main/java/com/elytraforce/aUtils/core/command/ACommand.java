@@ -15,7 +15,7 @@ public interface ACommand {
     public String getUsage();
     public String getDescription();
 
-    public boolean execute(ACommandSender sender, String[] args);
-    public List<String> executeTab(ACommandSender sender, String[] args);
+    public boolean execute(ASenderWrapper sender, String[] args);
+    public List<String> executeTab(ASenderWrapper sender, String[] args);
 
 }

@@ -1,17 +1,16 @@
-package com.elytraforce.aUtils.spigot.command;
+package com.elytraforce.aUtils.bungee.command;
 
 import com.elytraforce.aUtils.core.command.ASenderWrapper;
-import org.bukkit.command.CommandSender;
+import net.md_5.bungee.api.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-//Wrapper for commandSender
-public class SpigotSenderWrapper implements ASenderWrapper<CommandSender> {
+public class BungeeSenderWrapper implements ASenderWrapper<CommandSender> {
 
     private CommandSender sender;
 
-    public SpigotSenderWrapper(CommandSender sender) {
+    public BungeeSenderWrapper(CommandSender sender) {
         this.sender = sender;
     }
 
@@ -53,3 +52,4 @@ public class SpigotSenderWrapper implements ASenderWrapper<CommandSender> {
     }
 
 }
+

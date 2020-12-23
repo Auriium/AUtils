@@ -45,11 +45,11 @@ public class ArgumentWrapperLeaf implements ActablePointLeaf {
     }
 
     @Override
-    public List<String> getBasedOnPosition(int currentPosition,String currentString) {
+    public List<String> getBasedOnPosition(int currentPosition,String[] stringArray) {
         return new ArrayList<>();
     }
 
-    public static class Booder {
+    public static class Builder {
 
         private final int position;
 
@@ -58,7 +58,7 @@ public class ArgumentWrapperLeaf implements ActablePointLeaf {
         private final LeafMap builderMap;
         private final ValueLeaf leaf;
 
-        public Booder(String id, int superpos, LeafMap map, Argument arg, ValueLeaf leaf) {
+        public Builder(String id, int superpos, LeafMap map, Argument arg, ValueLeaf leaf) {
             this.position = superpos + 1;
             this.builderMap = map;
             this.identifier = id;

@@ -1,45 +1,44 @@
 package com.elytraforce.aUtils.core.command.map;
 
-import com.elytraforce.aUtils.core.command.ACommandSender;
+import com.elytraforce.aUtils.core.command.ASenderWrapper;
 import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
 import com.elytraforce.aUtils.core.command.leaf.SplitLeaf;
 import com.elytraforce.aUtils.core.command.leaf.ValueLeaf;
 import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
 import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.model.LeafConsumer;
-import org.apache.commons.lang.Validate;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LeafMap {
 
-    private final static int superPos = -1;
+    private final int position = -1;
 
     private PointLeaf wrongArgsAction;
     private final LinkedHashMap<Integer, LinkedHashSet<Leaf>> actions = new LinkedHashMap<>();
 
-    public LeafMap point(String id, LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
-        Leaf leaf = builder.accept(new PointLeaf.Booder(id,superPos,this));
+    public LeafMap point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
+        Leaf leaf = builder.accept(new PointLeaf.Builder(id,this.position,this));
 
         return this;
     }
 
-    public LeafMap split(String id, LeafConsumer<SplitLeaf.Booder,SplitLeaf> builder) {
-        Leaf leaf = builder.accept(new SplitLeaf.Booder(id,superPos,this));
+    public LeafMap split(String id, LeafConsumer<SplitLeaf.Builder,SplitLeaf> builder) {
+        Leaf leaf = builder.accept(new SplitLeaf.Builder(id,this.position,this));
 
         return this;
     }
 
-    public LeafMap value(String id, LeafConsumer<ValueLeaf.Booder,ValueLeaf> builder) {
-        Leaf leaf = builder.accept(new ValueLeaf.Booder(id,superPos,this));
+    public LeafMap value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf> builder) {
+        Leaf leaf = builder.accept(new ValueLeaf.Builder(id,this.position,this));
 
         return this;
     }
 
-    public LeafMap pointWrongArgs(LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
+    public LeafMap pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
 
-        wrongArgsAction = builder.accept(new PointLeaf.Booder("ignored",superPos,this));
+        wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",this.position,this));
         return this;
 
     }
@@ -48,7 +47,7 @@ public class LeafMap {
         actions.computeIfAbsent(leaf.getPosition(), k -> new LinkedHashSet<>()).add(leaf);
     }
 
-    public boolean runActionFromArgs(ACommandSender sender, String[] args) {
+    public boolean runActionFromArgs(ASenderWrapper sender, String[] args) {
         getPointingLeaf(args).getActionHandler(args).run(sender, args);
 
         return true;
@@ -65,16 +64,19 @@ public class LeafMap {
         return leaflet.get(0).getPointingLeaf(args);
     }
 
-    public List<String> getTabcomplete(ACommandSender sender, String[] args) {
+    public List<String> getTabcomplete(ASenderWrapper sender, String[] args) {
         int currentPosition = args.length - 1;
-        String currentString = args[currentPosition];
+        int ahead = this.position + 1;
 
-        List<Leaf> leaflet = copyPartialMatches(args[0],actions.get(0));
-
-        if (currentPosition <= 0) {
+        List<Leaf> leaflet = copyPartialMatches(args[ahead],actions.get(0));
+        if (currentPosition == ahead) {
             return leaflet.stream().map(Leaf::getIdentifier).collect(Collectors.toList());
         } else {
-            return leaflet.isEmpty() ? new ArrayList<>() : leaflet.get(0).getBasedOnPosition(currentPosition,currentString);
+            if (leaflet.isEmpty()) {
+                return new ArrayList<>();
+            } else {
+                return leaflet.get(0).getBasedOnPosition(currentPosition,args);
+            }
         }
     }
 

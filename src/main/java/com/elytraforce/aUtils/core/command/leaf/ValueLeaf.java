@@ -1,14 +1,13 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
-import com.elytraforce.aUtils.core.command.ACommandSender;
+import com.elytraforce.aUtils.core.command.ASenderWrapper;
 import com.elytraforce.aUtils.core.command.arguments.Argument;
 import com.elytraforce.aUtils.core.command.arguments.Arguments;
 import com.elytraforce.aUtils.core.command.map.LeafMap;
 import com.elytraforce.aUtils.core.command.model.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ValueLeaf implements ActablePointLeaf {
 
@@ -30,7 +29,7 @@ public class ValueLeaf implements ActablePointLeaf {
     public ActionHandler getActionHandler(String[] args) {
         Arguments holder = new Arguments();
 
-        for (Argument argument : arguments.keySet()) {
+        for (Argument<?> argument : arguments.keySet()) {
 
             if(this.position + arguments.get(argument) + 1 >= args.length){
                 //index not exists
@@ -59,12 +58,16 @@ public class ValueLeaf implements ActablePointLeaf {
     }
 
     @Override
-    public List<String> getBasedOnPosition(int currentPosition, String currentString) {
-        return new ArrayList<>();
+    public List<String> getBasedOnPosition(int position, String[] stringArray) {
+        if (position <= Collections.max(this.arguments.values()) + this.position + 1) {
+            List<String> leaflet = getSingleFromPosition(position - this.position - 1,stringArray[position]);
+            return copyPartialMatches(stringArray[position],leaflet);
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public ActionHandler getActionHandlerWithArguments(Arguments arguments) {
-        //anonymous create new actionhandler anon
         return (sender, args) -> handler.run(sender,arguments);
     }
 
@@ -77,8 +80,35 @@ public class ValueLeaf implements ActablePointLeaf {
     public Integer getPosition() {
         return position;
     }
+
+    private List<String> copyPartialMatches(final String token, final Collection<String> originals) throws UnsupportedOperationException, IllegalArgumentException {
+        return originals.stream().filter(arg -> startsWithIgnoreCase(arg,token)).collect(Collectors.toList());
+    }
+
+    private boolean startsWithIgnoreCase(final String string, final String prefix) throws IllegalArgumentException, NullPointerException {
+        if (string.length() < prefix.length()) {
+            return false;
+        }
+        return string.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public List<String> getSingleFromPosition(int pos, String positionString) {
+        Argument<?> arg = getKeyByValue(this.arguments,pos);
+
+        Objects.requireNonNull(arg);
+        return arg.getBounds(pos,positionString);
+    }
     
-    public static class Booder {
+    public static class Builder {
 
         private int nextArgumentPosition;
         private final int position;
@@ -90,12 +120,12 @@ public class ValueLeaf implements ActablePointLeaf {
 
         private ArgumentHandler handler;
 
-        public Booder(String id, int superpos, LeafMap map) {
+        public Builder(String id, int superpos, LeafMap map) {
             this.nextArgumentPosition = 0;
             this.position = superpos + 1;
             this.identifier = id;
             this.builderMap = map;
-            this.wrongArgsAction = new PointLeaf.Booder("ignored",position,map)
+            this.wrongArgsAction = new PointLeaf.Builder("ignored",position,map)
                     .setHandler((p,a) -> { p.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!"); })
                     .create();
 
@@ -103,19 +133,19 @@ public class ValueLeaf implements ActablePointLeaf {
 
             this.handler = new ArgumentHandler() {
                 @Override
-                public void run(ACommandSender sender, Arguments args) {
+                public void run(ASenderWrapper sender, Arguments args) {
                     sender.sendMessage("The developer of this plugin did not set up AuriumUtils correctly!");
                 }
             };
         }
 
-        public Booder pointWrongArgs(LeafConsumer<PointLeaf.Booder,PointLeaf> builder) {
-            wrongArgsAction = builder.accept(new PointLeaf.Booder("ignored",position,builderMap));
+        public Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
+            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap));
 
             return this;
         }
 
-        public Booder argument(Argument argument) {
+        public Builder argument(Argument argument) {
             if (subset.containsValue(nextArgumentPosition)) {
                 nextArgumentPosition++;
             }
@@ -125,7 +155,7 @@ public class ValueLeaf implements ActablePointLeaf {
             return this;
         }
 
-        public Booder setHandler(ArgumentHandler handler) {
+        public Builder setHandler(ArgumentHandler handler) {
             this.handler = handler;
             return this;
         }
@@ -136,7 +166,7 @@ public class ValueLeaf implements ActablePointLeaf {
             builderMap.putInternal(leaf);
 
             subset.forEach((arg,num) -> {
-                new ArgumentWrapperLeaf.Booder(arg.getIdentifier(),position + num + 1,builderMap,arg,leaf).create();
+                new ArgumentWrapperLeaf.Builder(arg.getIdentifier(),position + num + 1,builderMap,arg,leaf).create();
             });
 
             return leaf;

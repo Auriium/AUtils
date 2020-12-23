@@ -1,13 +1,13 @@
 package com.elytraforce.aUtils.core.command.arguments;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.*;
 
 //TODO: more fucking builders (make a specific argbuilder)
 public class StringArgument extends Argument<String> {
 
     private LinkedHashSet<String> limited;
-    private String identifier;
-    private int position;
 
     public StringArgument(String identifier) {
         super(identifier);
@@ -31,11 +31,11 @@ public class StringArgument extends Argument<String> {
     }
 
     @Override
-    public Collection<String> getBounds(String[] args) {
+    public List<String> getBounds(int position, String positionString) {
         if (limited.isEmpty()) {
-            return List.of(identifier);
+            return List.of(this.identifier);
         } else {
-            return limited;
+            return new ArrayList<>(this.limited);
         }
 
     }
