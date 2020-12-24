@@ -18,9 +18,9 @@ public class SplitLeaf implements Leaf {
     private final int position;
     private final String identifier;
     private final LinkedHashSet<Leaf> subset;
-    private final PointLeaf wrongArgsAction;
+    private final ActablePointLeaf wrongArgsAction;
 
-    private SplitLeaf(int position, String identifier, LinkedHashSet<Leaf> subset, PointLeaf wrongArgsAction) {
+    private SplitLeaf(int position, String identifier, LinkedHashSet<Leaf> subset, ActablePointLeaf wrongArgsAction) {
         this.identifier = identifier;
         this.position = position;
         this.subset = subset;
@@ -83,7 +83,7 @@ public class SplitLeaf implements Leaf {
         private final String identifier;
         private final LeafMap builderMap;
         private final LinkedHashSet<Leaf> subset;
-        private PointLeaf wrongArgsAction;
+        private ActablePointLeaf wrongArgsAction;
 
         public Builder(String id, int superpos, LeafMap map) {
             this.position = superpos + 1;
@@ -95,38 +95,38 @@ public class SplitLeaf implements Leaf {
                     .create();
         }
 
-        public Builder point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-            Leaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap));
+        public SplitLeaf.Builder point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            Leaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap)).create();
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Builder split(String id, LeafConsumer<Builder,SplitLeaf> builder) {
-            Leaf leaf = builder.accept(new Builder(id,position,builderMap));
+        public SplitLeaf.Builder split(String id, LeafConsumer<Builder,SplitLeaf.Builder> builder) {
+            Leaf leaf = builder.accept(new Builder(id,position,builderMap)).create();
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Builder value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf> builder) {
-            Leaf leaf = builder.accept(new ValueLeaf.Builder(id,position,builderMap));
+        public SplitLeaf.Builder value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
+            Leaf leaf = builder.accept(new ValueLeaf.Builder(id,position,builderMap)).create();
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap));
+        public SplitLeaf.Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap)).createNoPut();
 
             return this;
         }
 
-        public Builder pointDefaultArgs(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-            PointLeaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap));
+        public SplitLeaf.Builder pointDefaultArgs(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            PointLeaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap)).create();
 
             wrongArgsAction = leaf;
             this.subset.add(leaf);

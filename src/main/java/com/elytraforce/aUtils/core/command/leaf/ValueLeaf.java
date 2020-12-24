@@ -144,8 +144,8 @@ public class ValueLeaf implements ActablePointLeaf {
             };
         }
 
-        public Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap));
+        public Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap)).createNoPut();
 
             return this;
         }
@@ -175,6 +175,10 @@ public class ValueLeaf implements ActablePointLeaf {
             });
 
             return leaf;
+        }
+
+        public ValueLeaf createNoPut() {
+            return new ValueLeaf(position,identifier,handler,subset,wrongArgsAction);
         }
     }
 

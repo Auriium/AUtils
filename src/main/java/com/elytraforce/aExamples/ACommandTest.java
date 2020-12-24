@@ -9,6 +9,7 @@ import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ACommandTest extends AMapExecutor {
 
@@ -27,7 +28,7 @@ public class ACommandTest extends AMapExecutor {
     }
 
     @Override
-    public ArrayList<String> getAliases() {
+    public List<String> getAliases() {
         ArrayList<String> shit = new ArrayList<>();
         shit.add("HELLO");
         return shit;
@@ -52,40 +53,39 @@ public class ACommandTest extends AMapExecutor {
             .point("arg0hello",builder -> {
                 return builder.setHandler((player,args) -> {
                     player.sendMessage("Hello, player!");
-                }).create();
+                });
             })
             .split("arg0split",builder -> {
                 return builder
                         .pointDefaultArgs("arg1first",builder1 ->
                             builder1.setHandler((player, args) -> {
                                 player.sendMessage("Ran command number 1!");
-                            }).create()
+                            })
                         )
                         .point("arg1second",builder1 ->
                             builder1.setHandler((player,args) -> {
                                 player.sendMessage("Ran command number 2!");
-                            }).create()
+                            })
                         )
-                        .value("arg1val", builder1 ->
-                            builder1
-                            .argument(new StringArgument("cum_type"))
-                            .setHandler((sender,args) -> {
-                                sender.sendMessage("You have the nice color of " + args.getString("cum_type"));
-                            }).create()
-                        ).create();
+                        .value("arg1val", builder1 -> {
+                            return builder1.argument(new StringArgument("cum_type"))
+                                    .setHandler((sender, args) -> {
+                                        sender.sendMessage("You have the nice color of " + args.getString("cum_type"));
+                                    });
+                        });
             })
             .split("arg0cum",builder -> {
                 return builder
                         .pointDefaultArgs("arg1sex",builder1 -> {
                             return builder1.setHandler((player,args) -> {
                                 player.sendMessage("Ran command number 1!");
-                            }).create();
+                            });
                         })
                         .point("arg1flex",builder1 -> {
                             return builder1.setHandler((player,args) -> {
                                 player.sendMessage("Ran command number 2!");
-                            }).create();
-                        }).create();
+                            });
+                        });
             })
             .value("args0value", builder -> {
                 return builder
@@ -97,8 +97,8 @@ public class ACommandTest extends AMapExecutor {
                         .pointWrongArgs(builder1 -> {
                             return builder1.setHandler((player,arg) -> {
                                 player.sendMessage(chat.colorString("&cIncorrect Usage! &7Usage: /args0value <String> <john/nipple>"));
-                            }).createNoPut();
-                        }).create();
+                            });
+                        });
             })
             .pointWrongArgs(builder -> {
                 return builder.setHandler((player,args) -> {
@@ -106,7 +106,7 @@ public class ACommandTest extends AMapExecutor {
                     player.sendMessage(chat.colorString(""));
                     player.sendMessage(chat.colorString("&b/ballcommand &7arg0hello"));
                     player.sendMessage(chat.colorString("&b/ballcommand &7arg0split <arg1first/arg1second>"));
-                }).createNoPut();
+                });
             });
 
     @Override

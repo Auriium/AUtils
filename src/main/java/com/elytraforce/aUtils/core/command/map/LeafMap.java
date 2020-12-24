@@ -20,32 +20,60 @@ public class LeafMap {
 
     private final int position = -1;
 
-    private PointLeaf wrongArgsAction;
+    private ActablePointLeaf wrongArgsAction;
     private final LinkedHashMap<Integer, LinkedHashSet<Leaf>> actions = new LinkedHashMap<>();
 
-    public LeafMap point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-        Leaf leaf = builder.accept(new PointLeaf.Builder(id,this.position,this));
+    private Integer maxArgs;
+
+    public LeafMap point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+        Leaf leaf = builder.accept(new PointLeaf.Builder(id,this.position,this)).create();
 
         return this;
     }
 
-    public LeafMap split(String id, LeafConsumer<SplitLeaf.Builder,SplitLeaf> builder) {
-        Leaf leaf = builder.accept(new SplitLeaf.Builder(id,this.position,this));
+    public LeafMap split(String id, LeafConsumer<SplitLeaf.Builder,SplitLeaf.Builder> builder) {
+        Leaf leaf = builder.accept(new SplitLeaf.Builder(id,this.position,this)).create();
 
         return this;
     }
 
-    public LeafMap value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf> builder) {
-        Leaf leaf = builder.accept(new ValueLeaf.Builder(id,this.position,this));
+    public LeafMap value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
+        Leaf leaf = builder.accept(new ValueLeaf.Builder(id,this.position,this)).create();
 
         return this;
     }
 
-    public LeafMap pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
+    public LeafMap pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
 
-        wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",this.position,this));
+        wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",this.position,this)).createNoPut();
         return this;
 
+    }
+
+    public LeafMap pointDefaultArgs(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+
+        wrongArgsAction = builder.accept(new PointLeaf.Builder(id,this.position,this)).create();
+        return this;
+
+    }
+
+    public LeafMap valueWrongArgs(LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
+
+        wrongArgsAction = builder.accept(new ValueLeaf.Builder("ignored",this.position,this)).createNoPut();
+        return this;
+
+    }
+
+    public LeafMap valueDefaultArgs(LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
+
+        wrongArgsAction = builder.accept(new ValueLeaf.Builder("ignored",this.position,this)).create();
+        return this;
+
+    }
+
+    public LeafMap withMaxArgs(int amount) {
+        this.maxArgs = amount;
+        return this;
     }
 
     public void putInternal(Leaf leaf) {
@@ -53,6 +81,13 @@ public class LeafMap {
     }
 
     public boolean runActionFromArgs(ASenderWrapper sender, String[] args) {
+        if (this.maxArgs != null) {
+            if (args.length - 1 > maxArgs) {
+                wrongArgsAction.getActionHandler(args).run(sender, args);
+                return true;
+            }
+        }
+
         getPointingLeaf(args).getActionHandler(args).run(sender, args);
 
         return true;
