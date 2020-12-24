@@ -36,11 +36,13 @@
                             <pattern>com.zaxxer.hikari</pattern>
                             <shadedPattern>${project.groupId}.libs.hikari</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>org.mybatis</pattern>
-                            <shadedPattern>${project.groupId}.libs.ibatis</shadedPattern>
-                        </relocation>
                     </relocations>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>META-INF/services/java.sql.Driver</resource>
+                        </transformer>
+                    </transformers>
                 </configuration>
             </plugin>
         </plugins>
