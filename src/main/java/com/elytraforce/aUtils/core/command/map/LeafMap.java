@@ -45,7 +45,8 @@ public class LeafMap {
 
     public LeafMap pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
 
-        wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",this.position,this)).createNoPut();
+        //-1 just ensures that it will be taken without an identifier
+        wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",this.position - 1,this)).createNoPut();
         return this;
 
     }
@@ -59,7 +60,8 @@ public class LeafMap {
 
     public LeafMap valueWrongArgs(LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
 
-        wrongArgsAction = builder.accept(new ValueLeaf.Builder("ignored",this.position,this)).createNoPut();
+        //-1 just ensures that it will be taken without an identifier
+        wrongArgsAction = builder.accept(new ValueLeaf.Builder("ignored",this.position - 1,this)).createNoPut();
         return this;
 
     }
