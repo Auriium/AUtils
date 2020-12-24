@@ -8,7 +8,10 @@ import com.elytraforce.aUtils.core.command.model.ActionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-//function as placeholders for the tabcomplete
+/**
+ * I have no idea why this class exists. It does not serve any purpose right now and therefore I have deprecated it
+ * I would remove it except something tells me the cheese god will smite me if i do
+ */
 public class ArgumentWrapperLeaf implements ActablePointLeaf {
 
     private final ValueLeaf leaf;

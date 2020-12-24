@@ -16,7 +16,8 @@ import java.lang.reflect.Field;
  * Represents a file that is used to hold configuration files. Automatically fills fields if they are missing
  * as well as handles all saving loading and creating.
  */
-public abstract class AConfig extends AFile{
+@SuppressWarnings("unchecked")
+public abstract class AConfig extends ALoadableFile{
 
     @Inject private AConfigProvider provider;
     @Inject private APlugin plugin;
@@ -39,7 +40,7 @@ public abstract class AConfig extends AFile{
     }
 
     @Override
-    public AFile load() {
+    public AConfig load() {
 
         provider.load(file);
 
@@ -89,7 +90,7 @@ public abstract class AConfig extends AFile{
     }
 
     @Override
-    public AFile save() {
+    public AConfig save() {
         Class<? extends AConfig> cls = getClass();
 
         for(Field f : cls.getFields())
@@ -120,26 +121,15 @@ public abstract class AConfig extends AFile{
     }
 
     @Override
-    public AFile create() {
-        file = new File(plugin.getDataFolder(), this.filePosition());
-
-        if (!file.exists()) {
-            file.getParentFile().mkdirs();
-            try {
-                file.createNewFile();
-            } catch (IOException ex) {
-                logger.error("IOException creating config " + file.getName());
-            }
-
-            load();
-        }
+    public AConfig create() {
+        this.create(new File(plugin.getDataFolder(), this.filePosition()));
 
         return this;
     }
 
     @Override
-    public AFile create(File file) {
-        file = new File(plugin.getDataFolder(), "config.yml");
+    public AConfig create(File file) {
+        this.file = file;
 
         if (!file.exists()) {
             file.getParentFile().mkdirs();
@@ -151,7 +141,6 @@ public abstract class AConfig extends AFile{
 
             load();
         }
-
         return this;
     }
 

@@ -8,6 +8,10 @@ import com.elytraforce.aUtils.core.command.model.ActionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a {@link com.elytraforce.aUtils.core.command.model.Leaf} that takes no arguments and
+ * is at the end of it's branch/route. Accepts an actionhandler and performs actions with it.
+ */
 public class PointLeaf implements ActablePointLeaf {
 
     private final int position;

@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * HikariCP wrapper that handles all database related stuff.
- * TODO: add sqlite support because people like that
+ * Deprecated old datakore system. DO NOT USE unless you like bugs and no support, in which case go ahead
  */
 @SuppressWarnings("unused")
-public class ADataKore {
+@Deprecated
+public class DeprecatedDataKore {
 
     private final HikariDataSource source;
     private final long maxBlockTime;
@@ -38,10 +38,9 @@ public class ADataKore {
         return source.isClosed();
     }
 
-    private ADataKore(String databaseName, HikariConfig config, ALogger logger) {
+    private DeprecatedDataKore(String databaseName, HikariConfig config, ALogger logger) {
         this.logger = logger;
 
-        config = new HikariConfig();
         int numOfThreads = 5;
         maxBlockTime = 15000L;
 
@@ -57,6 +56,7 @@ public class ADataKore {
         this.databaseName = databaseName;
     }
 
+    @Deprecated
     public CompletableFuture<Void> update(String sql, Object... toSet) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = source.getConnection()) {
@@ -75,10 +75,12 @@ public class ADataKore {
         });
     }
 
+    @Deprecated
     public CompletableFuture<Void> updateMultiple(CompletableFuture<Void>... futures) {
         return CompletableFuture.allOf(futures);
     }
 
+    @Deprecated
     public CachedRowSet query(String sql, Object... toSet) throws SQLException{
         CachedRowSet set;
 
@@ -97,6 +99,7 @@ public class ADataKore {
         return set;
     }
 
+    @Deprecated
     public void close() {
         asyncQueue.shutdown();
         try {
@@ -107,6 +110,7 @@ public class ADataKore {
         source.close();
     }
 
+    @Deprecated
     public int createTableFromFile(String file, Class<?> mainClass) throws IOException, SQLException {
         URL resource = Resources.getResource(mainClass, "/" + file);
         String databaseStructure = Resources.toString(resource, Charsets.UTF_8);
@@ -114,6 +118,7 @@ public class ADataKore {
         return createTableFromStatement(databaseStructure);
     }
 
+    @Deprecated
     public int createTableFromStatement(String sql) throws SQLException {
         try (Connection connection = source.getConnection()) {
             logger.debug("(Create Table) Successfully got a new connection from hikari: " + connection.toString() + ", catalog: " + connection.getCatalog());
@@ -124,10 +129,11 @@ public class ADataKore {
         }
     }
 
+    @Deprecated
     public void createTablesFromSchema(String file, Class<?> mainClass) throws IOException, SQLException{
         try (final Connection connection = this.source.getConnection()) {
             String beginning = "USE " + this.databaseName + ";";
-            InputStream databaseSchema = ADataKore.class.getResourceAsStream(file);
+            InputStream databaseSchema = DeprecatedDataKore.class.getResourceAsStream(file);
             List<InputStream> streams = Arrays.asList(
                     new ByteArrayInputStream(beginning.getBytes()),
                     databaseSchema);
@@ -139,6 +145,7 @@ public class ADataKore {
         }
     }
 
+    @Deprecated
     public static class Builder {
 
         private String pluginName;
@@ -149,6 +156,7 @@ public class ADataKore {
         private String host;
         private boolean useSSL;
         private ALogger logger;
+        private boolean useSQLite;
 
         public Builder(ALogger logger) {
             this.pluginName = "defaultPlugin";
@@ -159,6 +167,7 @@ public class ADataKore {
             this.host = "defaultHost";
             this.useSSL = false;
             this.logger = logger;
+            this.useSQLite = false;
         }
 
         public Builder setPluginName(String string) {
@@ -196,29 +205,34 @@ public class ADataKore {
             return this;
         }
 
-        public ADataKore build() {
+        public DeprecatedDataKore build() {
             HikariConfig config = new HikariConfig();
+            if (useSQLite) {
+                config.setDataSourceClassName("org.sqlite.SQLiteDataSource");
+                config.addDataSourceProperty("url","jdbc:");
+            }
+                config.setJdbcUrl(String.format(useSSL ? "jdbc:mysql://%s:%d/%s" : "jdbc:mysql://%s:%d/%s?useSSL=false",
+                        host,
+                        port,
+                        name));
+                config.setUsername(username);
+                config.setPassword(password);
+                config.setPoolName(pluginName + "-datakore-hikari");
 
-            config.setJdbcUrl(String.format(useSSL ? "jdbc:mysql://%s:%d/%s" : "jdbc:mysql://%s:%d/%s?useSSL=false",
-                    host,
-                    port,
-                    name));
-            config.setUsername(username);
-            config.setPassword(password);
-            config.setPoolName(pluginName + "-datakore-hikari");
+                config.addDataSourceProperty("cachePrepStmts", true);
+                config.addDataSourceProperty("prepStmtCacheSize", 250);
+                config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+                config.addDataSourceProperty("useServerPrepStmts", true);
+                config.addDataSourceProperty("useLocalSessionState", true);
+                config.addDataSourceProperty("rewriteBatchedStatements", true);
+                config.addDataSourceProperty("cacheResultSetMetadata", true);
+                config.addDataSourceProperty("cacheServerConfiguration", true);
+                config.addDataSourceProperty("elideSetAutoCommit", true);
+                config.addDataSourceProperty("maintainTimeStats", false);
 
-            config.addDataSourceProperty("cachePrepStmts", true);
-            config.addDataSourceProperty("prepStmtCacheSize", 250);
-            config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
-            config.addDataSourceProperty("useServerPrepStmts", true);
-            config.addDataSourceProperty("useLocalSessionState", true);
-            config.addDataSourceProperty("rewriteBatchedStatements", true);
-            config.addDataSourceProperty("cacheResultSetMetadata", true);
-            config.addDataSourceProperty("cacheServerConfiguration", true);
-            config.addDataSourceProperty("elideSetAutoCommit", true);
-            config.addDataSourceProperty("maintainTimeStats", false);
 
-            return new ADataKore(name,config,logger);
+
+            return new DeprecatedDataKore(name,config,logger);
         }
 
     }

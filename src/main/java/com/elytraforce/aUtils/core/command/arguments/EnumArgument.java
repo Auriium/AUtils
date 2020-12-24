@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * An implementation of {@link Argument} that provides an Enum.
+ *
+ * Can have bounds based on a provided collection of Enum
+ */
 public class EnumArgument implements Argument<Enum>{
 
     private String identifier;

@@ -8,6 +8,11 @@ import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a {@link Leaf} that provides passthrough to one or more leaves connected to it via point, split, and value methods
+ * These methods are identical to that of {@link LeafMap}'s and register themselves onto the map unless otherwise specified.
+ * This leaf is what allows complex subcommand routes.
+ */
 public class SplitLeaf implements Leaf {
 
     private final int position;

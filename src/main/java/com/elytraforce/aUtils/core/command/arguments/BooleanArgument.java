@@ -2,6 +2,11 @@ package com.elytraforce.aUtils.core.command.arguments;
 
 import java.util.*;
 
+/**
+ * An implementation of {@link Argument} that provides a Boolean.
+ *
+ * Can either be true or false, with a default. What else did you expect, a rainbow rocket launcher?
+ */
 public class BooleanArgument implements Argument<Boolean>{
 
     private String identifier;

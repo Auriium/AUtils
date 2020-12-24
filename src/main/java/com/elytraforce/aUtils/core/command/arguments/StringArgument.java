@@ -4,7 +4,11 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.*;
 
-//TODO: more fucking builders (make a specific argbuilder)
+/**
+ * An implementation of {@link Argument} that provides a String.
+ *
+ * Can have bounds based on a provided collection of Strings
+ */
 public class StringArgument implements Argument<String> {
 
     private String identifier;

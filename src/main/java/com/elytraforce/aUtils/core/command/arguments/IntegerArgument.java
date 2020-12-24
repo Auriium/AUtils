@@ -5,6 +5,11 @@ import org.apache.commons.lang.math.NumberUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * An implementation of {@link Argument} that provides an Integer.
+ *
+ * Can have bounds based on minimum and maximum numbers
+ */
 public class IntegerArgument implements Argument<Integer> {
 
     private String identifier;

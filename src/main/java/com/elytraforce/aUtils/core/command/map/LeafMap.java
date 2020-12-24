@@ -11,6 +11,11 @@ import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a branching map of subcommands contained by a {@link com.elytraforce.aUtils.core.command.AMapExecutor}
+ * Provides functional interfaces of {@link Leaf} via methods point, split, and value which provide {@link PointLeaf}, {@link SplitLeaf}
+ * and {@link ValueLeaf} respectively. Can have a WrongArg Action. Automatically handles TabComplete.
+ */
 public class LeafMap {
 
     private final int position = -1;

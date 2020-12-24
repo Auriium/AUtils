@@ -9,6 +9,11 @@ import com.elytraforce.aUtils.core.command.model.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a {@link Leaf} that can have values in the form of {@link Argument}s
+ * When built, runs provided {@link ArgumentHandler} to perform actions with arguments
+ * Implements {@link ActablePointLeaf} as there should not be any leaves after this leaf on it's LeafMap path.
+ */
 public class ValueLeaf implements ActablePointLeaf {
 
     private final int position;

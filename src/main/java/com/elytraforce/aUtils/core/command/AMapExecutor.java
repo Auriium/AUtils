@@ -4,6 +4,10 @@ import com.elytraforce.aUtils.core.command.map.LeafMap;
 
 import java.util.List;
 
+/**
+ * An AbstractCommandExecutor that consumes LeafMaps from Leaf Framework.
+ * Extend this if you are trying to make a command with Leaf
+ */
 public abstract class AMapExecutor extends ACommandExecutor {
 
     @Override

@@ -7,16 +7,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Represents a file that can be created, loaded, and saved, and has a set position.
+ * Represents a file that can be created and has a set position.
  */
 public abstract class AFile {
 
     protected File file;
 
-    public abstract AFile load();
-    public abstract AFile save();
-    public abstract AFile create();
-    public abstract AFile create(File file);
+    public abstract <T extends AFile> T create();
+    public abstract <T extends AFile> T create(File file);
 
     public abstract String filePosition();
 }
