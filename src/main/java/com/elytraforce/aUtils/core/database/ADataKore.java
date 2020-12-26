@@ -23,12 +23,12 @@ import java.util.concurrent.CompletionException;
  * Datakore system with MySQL and SQLite support via a builder.
  * Do not instantiate, please use the builder.
  */
-public abstract class DataKore {
+public abstract class ADataKore {
 
     protected final ALogger logger;
     protected final String databaseName;
     
-    protected DataKore(String databaseName, ALogger logger) {
+    protected ADataKore(String databaseName, ALogger logger) {
         this.databaseName = databaseName;
         this.logger = logger;
     }
@@ -170,10 +170,10 @@ public abstract class DataKore {
             return this;
         }
 
-        public DataKore build() {
+        public ADataKore build() {
 
             if (useSQLite) {
-                return new SQLiteDataKore(this.name,this.logger);
+                return new SQLiteKore(this.name,this.logger);
             } else {
                 HikariConfig config = new HikariConfig();
                 config.setJdbcUrl(String.format(useSSL ? "jdbc:mysql://%s:%d/%s" : "jdbc:mysql://%s:%d/%s?useSSL=false",
@@ -194,7 +194,7 @@ public abstract class DataKore {
                 config.addDataSourceProperty("cacheServerConfiguration", true);
                 config.addDataSourceProperty("elideSetAutoCommit", true);
                 config.addDataSourceProperty("maintainTimeStats", false);
-                return new HikariDataKore(this.name,this.logger,config);
+                return new HikariKore(this.name,this.logger,config);
             }
 
 

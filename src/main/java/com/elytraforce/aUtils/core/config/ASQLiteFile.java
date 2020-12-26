@@ -1,6 +1,6 @@
 package com.elytraforce.aUtils.core.config;
 
-import com.elytraforce.aUtils.core.database.SQLiteDataKore;
+import com.elytraforce.aUtils.core.database.SQLiteKore;
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.elytraforce.aUtils.core.plugin.APlugin;
 import com.google.inject.Inject;
@@ -15,7 +15,7 @@ and mysql, i know jack shit about SQLite.*/
 
 /**
  * A class that can be created, and is specifically purposed for
- * {@link SQLiteDataKore} to use as a SQLite database.
+ * {@link SQLiteKore} to use as a SQLite database.
  */
 public class ASQLiteFile extends AFile {
 

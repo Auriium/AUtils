@@ -7,7 +7,7 @@ import com.elytraforce.aUtils.core.command.model.Leaf;
  * Represents a {@link Leaf}
  * that has a directly related {@link ActionHandler} and that can perform actions given arguments.
  */
-public interface ActablePointLeaf extends Leaf {
+public interface ActableLeaf extends Leaf {
 
     public ActionHandler getActionHandler(String[] args);
 

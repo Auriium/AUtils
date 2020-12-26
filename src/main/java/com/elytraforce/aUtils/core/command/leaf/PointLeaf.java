@@ -1,9 +1,10 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
 import com.elytraforce.aUtils.core.command.ASenderWrapper;
-import com.elytraforce.aUtils.core.command.map.LeafMap;
-import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
+import com.elytraforce.aUtils.core.command.map.NewLeafMap;
+import com.elytraforce.aUtils.core.command.model.ActableLeaf;
 import com.elytraforce.aUtils.core.command.model.ActionHandler;
+import com.elytraforce.aUtils.core.command.model.Leaf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * Represents a {@link com.elytraforce.aUtils.core.command.model.Leaf} that takes no arguments and
  * is at the end of it's branch/route. Accepts an actionhandler and performs actions with it.
  */
-public class PointLeaf implements ActablePointLeaf {
+public class PointLeaf implements ActableLeaf {
 
     private final int position;
     private final String identifier;
@@ -26,21 +27,6 @@ public class PointLeaf implements ActablePointLeaf {
     }
 
     @Override
-    public ActionHandler getActionHandler(String[] args) {
-        return handler;
-    }
-
-    @Override
-    public ActablePointLeaf getPointingLeaf(String[] args) {
-        return this;
-    }
-
-    @Override
-    public List<String> getBasedOnPosition(int currentPosition, String[] stringArray) {
-        return new ArrayList<>();
-    }
-
-    @Override
     public String getIdentifier() {
         return this.identifier;
     }
@@ -50,15 +36,35 @@ public class PointLeaf implements ActablePointLeaf {
         return position;
     }
 
+    @Override
+    public ActionHandler getActionHandler(String[] args) {
+        return handler;
+    }
+
+    @Override
+    public ActableLeaf getPointingLeaf(String[] args) {
+        return this;
+    }
+
+    @Override
+    public List<String> getTabSuggestions(int currentPosition, String[] stringArray) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<String> getDefaultUsage() {
+        return List.of(this.getIdentifier());
+    }
+
     public static class Builder {
 
         private final int position;
 
         private ActionHandler handler;
         private final String identifier;
-        private LeafMap builderMap;
+        private NewLeafMap.Builder builderMap;
 
-        public Builder(String id, int superpos, LeafMap map) {
+        public Builder(String id, int superpos, NewLeafMap.Builder map) {
             this.position = superpos + 1;
             this.builderMap = map;
 

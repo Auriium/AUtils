@@ -4,7 +4,7 @@ import com.elytraforce.aUtils.core.chat.AChat;
 import com.elytraforce.aUtils.core.command.ASenderWrapper;
 import com.elytraforce.aUtils.core.command.AMapExecutor;
 import com.elytraforce.aUtils.core.command.arguments.StringArgument;
-import com.elytraforce.aUtils.core.command.map.LeafMap;
+import com.elytraforce.aUtils.core.command.map.NewLeafMap;
 import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.inject.Inject;
 
@@ -49,69 +49,48 @@ public class ACommandTest extends AMapExecutor {
         return "cool command that you can use";
     }
 
-    private LeafMap map = new LeafMap()
-            .point("arg0hello",builder -> {
-                return builder.setHandler((player,args) -> {
-                    player.sendMessage("Hello, player!");
-                });
-            })
-            .split("arg0split",builder -> {
+    private NewLeafMap newMap = new NewLeafMap.Builder(getName())
+            .baseSplit(builder -> {
                 return builder
-                        .pointDefaultArgs("arg1first",builder1 ->
-                            builder1.setHandler((player, args) -> {
-                                player.sendMessage("Ran command number 1!");
-                            })
-                        )
-                        .point("arg1second",builder1 ->
-                            builder1.setHandler((player,args) -> {
-                                player.sendMessage("Ran command number 2!");
-                            })
-                        )
-                        .value("arg1val", builder1 -> {
-                            return builder1.argument(new StringArgument("cum_type"))
-                                    .setHandler((sender, args) -> {
-                                        sender.sendMessage("You have the nice color of " + args.getString("cum_type"));
+                        .point("args0hello",builder1 -> {
+                            return builder1.setHandler((player,args) -> {
+                                player.sendMessage("args0 command!");
+                            });
+                        })
+                        .split("args0split",builder1 -> {
+                            return builder1.pointDefaultArgs("first",builder2 -> {
+                                return builder2.setHandler((sender,args) -> {
+                                    sender.sendMessage("first command!");
+                                });
+                            }).point("second",builder2 -> {
+                                return builder2.setHandler((sender,args) -> {
+                                    sender.sendMessage("second command!");
+                                });
+                            }).value("split",builder2 -> {
+                                return builder2.argument(new StringArgument("cum_type").withDefault("blue"))
+                                        .setHandler((sender,args) -> {
+                                            sender.sendMessage("You have the nice color of " + args.getString("cum_type"));
+                                        });
+                            });
+                        })
+                        .value("args0value",builder1 -> {
+                            return builder1
+                                    .argument(new StringArgument("string1"))
+                                    .argument(new StringArgument("string2").withLimits("john","nipple").withDefault("john"))
+                                    .setHandler((player,args) -> {
+                                        player.sendMessage("You chose " + args.getString("string1") + "" + args.getString("string2"));
+                                    })
+                                    .pointWrongArgs(builder2 -> {
+                                        return builder2.setHandler((player,arg) -> {
+                                            player.sendMessage(chat.colorString("&cIncorrect Usage! &7Usage: /args0value <String> <john/nipple>"));
+                                        });
                                     });
                         });
-            })
-            .split("arg0cum",builder -> {
-                return builder
-                        .pointDefaultArgs("arg1sex",builder1 -> {
-                            return builder1.setHandler((player,args) -> {
-                                player.sendMessage("Ran command number 1!");
-                            });
-                        })
-                        .point("arg1flex",builder1 -> {
-                            return builder1.setHandler((player,args) -> {
-                                player.sendMessage("Ran command number 2!");
-                            });
-                        });
-            })
-            .value("args0value", builder -> {
-                return builder
-                        .argument(new StringArgument("string1"))
-                        .argument(new StringArgument("string2").withLimits("john","nipple").withDefault("john"))
-                        .setHandler((player,args) -> {
-                            player.sendMessage("You chose " + args.getString("string1") + "" + args.getString("string2"));
-                        })
-                        .pointWrongArgs(builder1 -> {
-                            return builder1.setHandler((player,arg) -> {
-                                player.sendMessage(chat.colorString("&cIncorrect Usage! &7Usage: /args0value <String> <john/nipple>"));
-                            });
-                        });
-            })
-            .pointWrongArgs(builder -> {
-                return builder.setHandler((player,args) -> {
-                    player.sendMessage(chat.colorString("&7&m---------&f<&bPlugin&9Test&f>&7&m---------"));
-                    player.sendMessage(chat.colorString(""));
-                    player.sendMessage(chat.colorString("&b/ballcommand &7arg0hello"));
-                    player.sendMessage(chat.colorString("&b/ballcommand &7arg0split <arg1first/arg1second>"));
-                });
-            });
+            }).build();
 
     @Override
-    public LeafMap onCommandMap() {
-        return map;
+    public NewLeafMap onCommandMap() {
+        return newMap;
     }
 
     @Override

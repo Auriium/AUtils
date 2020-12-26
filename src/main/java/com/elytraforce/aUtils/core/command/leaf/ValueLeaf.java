@@ -3,7 +3,7 @@ package com.elytraforce.aUtils.core.command.leaf;
 import com.elytraforce.aUtils.core.command.ASenderWrapper;
 import com.elytraforce.aUtils.core.command.arguments.Argument;
 import com.elytraforce.aUtils.core.command.arguments.Arguments;
-import com.elytraforce.aUtils.core.command.map.LeafMap;
+import com.elytraforce.aUtils.core.command.map.NewLeafMap;
 import com.elytraforce.aUtils.core.command.model.*;
 
 import java.util.*;
@@ -12,68 +12,27 @@ import java.util.stream.Collectors;
 /**
  * Represents a {@link Leaf} that can have values in the form of {@link Argument}s
  * When built, runs provided {@link ArgumentHandler} to perform actions with arguments
- * Implements {@link ActablePointLeaf} as there should not be any leaves after this leaf on it's LeafMap path.
+ * Implements {@link ActableLeaf} as there should not be any leaves after this leaf on it's LeafMap path.
  */
-public class ValueLeaf implements ActablePointLeaf {
+public class ValueLeaf implements ActableLeaf {
 
     private final int position;
     private final String identifier;
     private final PointLeaf wrongArgsAction;
-    private final LinkedHashMap<Argument,Integer> arguments;
+    private final LinkedHashMap<ArgumentWrapperLeaf,Integer> arguments;
     private final ArgumentHandler handler;
 
-    private ValueLeaf(int position, String identifier, ArgumentHandler handler, LinkedHashMap<Argument,Integer> map, PointLeaf wrongArgsAction) {
+    private ValueLeaf(int position, String identifier, ArgumentHandler handler, LinkedHashMap<Argument<?>,Integer> map, PointLeaf wrongArgsAction, NewLeafMap.Builder builderMap) {
         this.identifier = identifier;
         this.position = position;
         this.wrongArgsAction = wrongArgsAction;
-        this.arguments = map;
+        this.arguments = new LinkedHashMap<>();
+
+        map.forEach((arg,pos) -> {
+            arguments.put(new ArgumentWrapperLeaf.Builder(arg.getIdentifier(),this.position + pos + 1,builderMap,arg,this).create(),pos);
+        });
+
         this.handler = handler;
-    }
-
-    @Override
-    public ActionHandler getActionHandler(String[] args) {
-        Arguments holder = new Arguments();
-
-        for (Argument<?> argument : arguments.keySet()) {
-
-            if(this.position + arguments.get(argument) + 1 >= args.length){
-                //index not exists
-                if (argument.isOptional()) {
-                    holder.add(argument.getIdentifier(),argument.getDefault());
-                } else {
-                    return wrongArgsAction.getActionHandler(args);
-                }
-            }else{
-                // index exists
-                String positionString = args[this.position + arguments.get(argument) + 1];
-                if (argument.check(positionString)) {
-                    return wrongArgsAction.getActionHandler(args);
-                }
-                holder.add(argument.getIdentifier(),argument.parse(positionString));
-            }
-
-        }
-        return getActionHandlerWithArguments(holder);
-    }
-
-    //TODO this needs to point to the correct argument-leaf
-    @Override
-    public ActablePointLeaf getPointingLeaf(String[] args) {
-        return this;
-    }
-
-    @Override
-    public List<String> getBasedOnPosition(int position, String[] stringArray) {
-        if (position <= Collections.max(this.arguments.values()) + this.position + 1) {
-            List<String> leaflet = getSingleFromPosition(position - this.position - 1,stringArray[position]);
-            return copyPartialMatches(stringArray[position],leaflet);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    public ActionHandler getActionHandlerWithArguments(Arguments arguments) {
-        return (sender, args) -> handler.run(sender,arguments);
     }
 
     @Override
@@ -86,15 +45,63 @@ public class ValueLeaf implements ActablePointLeaf {
         return position;
     }
 
-    private List<String> copyPartialMatches(final String token, final Collection<String> originals) throws UnsupportedOperationException, IllegalArgumentException {
-        return originals.stream().filter(arg -> startsWithIgnoreCase(arg,token)).collect(Collectors.toList());
+    @Override
+    public ActionHandler getActionHandler(String[] args) {
+        Arguments holder = new Arguments();
+
+        for (ArgumentWrapperLeaf argument : arguments.keySet()) {
+
+            if(this.position + arguments.get(argument) + 1 >= args.length){
+                //index not exists
+                if (argument.getArgument().isOptional()) {
+                    holder.add(argument.getIdentifier(),argument.getArgument().getDefault());
+                } else {
+                    return wrongArgsAction.getActionHandler(args);
+                }
+            }else{
+                // index exists
+                String positionString = args[this.position + arguments.get(argument) + 1];
+                if (argument.getArgument().check(positionString)) {
+                    return wrongArgsAction.getActionHandler(args);
+                }
+                holder.add(argument.getIdentifier(),argument.getArgument().parse(positionString));
+            }
+
+        }
+        return getActionHandlerWithArguments(holder);
     }
 
-    private boolean startsWithIgnoreCase(final String string, final String prefix) throws IllegalArgumentException, NullPointerException {
-        if (string.length() < prefix.length()) {
-            return false;
+    //TODO this needs to point to the correct argument-leaf
+    @Override
+    public ActableLeaf getPointingLeaf(String[] args) {
+        return this;
+    }
+
+    @Override
+    public List<String> getTabSuggestions(int position, String[] stringArray) {
+        if (position <= Collections.max(this.arguments.values()) + this.position + 1) {
+            return Objects.requireNonNull(getKeyByValue(arguments, position - this.position - 1)).getTabSuggestions(position, stringArray);
+        } else {
+            return new ArrayList<>();
         }
-        return string.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    @Override
+    public List<String> getDefaultUsage() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(this.identifier);
+
+        for (ArgumentWrapperLeaf arg : this.arguments.keySet()) {
+            builder.append(" ").append("&7<&b").append(arg.getIdentifier()).append("&7>");
+        }
+
+        return List.of(builder.toString());
+
+    }
+
+    public ActionHandler getActionHandlerWithArguments(Arguments arguments) {
+        return (sender, args) -> handler.run(sender,arguments);
     }
 
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
@@ -105,13 +112,6 @@ public class ValueLeaf implements ActablePointLeaf {
         }
         return null;
     }
-
-    public List<String> getSingleFromPosition(int pos, String positionString) {
-        Argument<?> arg = getKeyByValue(this.arguments,pos);
-
-        Objects.requireNonNull(arg);
-        return arg.getBounds(pos,positionString);
-    }
     
     public static class Builder {
 
@@ -119,13 +119,13 @@ public class ValueLeaf implements ActablePointLeaf {
         private final int position;
 
         private final String identifier;
-        private final LeafMap builderMap;
-        private LinkedHashMap<Argument,Integer> subset;
+        private final NewLeafMap.Builder builderMap;
+        private LinkedHashMap<Argument<?>,Integer> subset;
         private PointLeaf wrongArgsAction;
 
         private ArgumentHandler handler;
 
-        public Builder(String id, int superpos, LeafMap map) {
+        public Builder(String id, int superpos, NewLeafMap.Builder map) {
             this.nextArgumentPosition = 0;
             this.position = superpos + 1;
             this.identifier = id;
@@ -150,7 +150,7 @@ public class ValueLeaf implements ActablePointLeaf {
             return this;
         }
 
-        public Builder argument(Argument argument) {
+        public Builder argument(Argument<?> argument) {
             if (subset.containsValue(nextArgumentPosition)) {
                 nextArgumentPosition++;
             }
@@ -166,19 +166,15 @@ public class ValueLeaf implements ActablePointLeaf {
         }
 
         public ValueLeaf create() {
-            ValueLeaf leaf = new ValueLeaf(position,identifier,handler,subset,wrongArgsAction);
+            ValueLeaf leaf = new ValueLeaf(position,identifier,handler,subset,wrongArgsAction,builderMap);
 
             builderMap.putInternal(leaf);
-
-            subset.forEach((arg,num) -> {
-                new ArgumentWrapperLeaf.Builder(arg.getIdentifier(),position + num + 1,builderMap,arg,leaf).create();
-            });
 
             return leaf;
         }
 
         public ValueLeaf createNoPut() {
-            return new ValueLeaf(position,identifier,handler,subset,wrongArgsAction);
+            return new ValueLeaf(position,identifier,handler,subset,wrongArgsAction,builderMap);
         }
     }
 

@@ -1,7 +1,5 @@
 package com.elytraforce.aUtils.core.command.model;
 
-import com.elytraforce.aUtils.core.command.map.LeafMap;
-
 import java.util.List;
 
 /**
@@ -14,17 +12,9 @@ public interface Leaf {
     public String getIdentifier();
     public Integer getPosition();
 
-    public ActablePointLeaf getPointingLeaf(String[] args);
-    public List<String> getBasedOnPosition(int currentPosition,String[] stringArray);
-
-    public interface Builder<LeafType extends Leaf> {
-
-        public void setPosition(int num);
-
-        //leaves are built on registering / putting / adding
-        public LeafType build();
-        public Leaf register(int positionSuper, LeafMap map);
-
-    }
+    //TODO let getPointingLeaf simply wrap getLinkedLeaf
+    public ActableLeaf getPointingLeaf(String[] args);
+    public List<String> getTabSuggestions(int currentPosition, String[] stringArray);
+    public List<String> getDefaultUsage();
 
 }

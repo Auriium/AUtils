@@ -1,44 +1,31 @@
 package com.elytraforce.aUtils.core.command.map;
 
-import com.elytraforce.aUtils.core.command.ASenderWrapper;
-import com.elytraforce.aUtils.core.command.leaf.PointLeaf;
-import com.elytraforce.aUtils.core.command.leaf.SplitLeaf;
-import com.elytraforce.aUtils.core.command.leaf.ValueLeaf;
-import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
-import com.elytraforce.aUtils.core.command.model.Leaf;
-import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-/**
- * Represents a branching map of subcommands contained by a {@link com.elytraforce.aUtils.core.command.AMapExecutor}
- * Provides functional interfaces of {@link Leaf} via methods point, split, and value which provide {@link PointLeaf}, {@link SplitLeaf}
- * and {@link ValueLeaf} respectively. Can have a WrongArg Action. Automatically handles TabComplete.
- */
+/*
 public class LeafMap {
 
-    private final int position = -1;
+    private int basePosition = -2;
 
     private ActablePointLeaf wrongArgsAction;
     private final LinkedHashMap<Integer, LinkedHashSet<Leaf>> actions = new LinkedHashMap<>();
 
     private Integer maxArgs;
+    private Integer minArgs;
 
     public LeafMap point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
-        Leaf leaf = builder.accept(new PointLeaf.Builder(id,this.position,this)).create();
+        Leaf leaf = builder.accept(new PointLeaf.Builder(id,basePosition + 1,this)).create();
 
         return this;
     }
 
     public LeafMap split(String id, LeafConsumer<SplitLeaf.Builder,SplitLeaf.Builder> builder) {
-        Leaf leaf = builder.accept(new SplitLeaf.Builder(id,this.position,this)).create();
+        Leaf leaf = builder.accept(new SplitLeaf.Builder(id,basePosition + 1,this)).create();
 
         return this;
     }
 
     public LeafMap value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
-        Leaf leaf = builder.accept(new ValueLeaf.Builder(id,this.position,this)).create();
+        Leaf leaf = builder.accept(new ValueLeaf.Builder(id,basePosition + 1,this)).create();
 
         return this;
     }
@@ -46,14 +33,14 @@ public class LeafMap {
     public LeafMap pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
 
         //-1 just ensures that it will be taken without an identifier
-        wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",this.position - 1,this)).createNoPut();
+        wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",basePosition,this)).createNoPut();
         return this;
 
     }
 
     public LeafMap pointDefaultArgs(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
 
-        wrongArgsAction = builder.accept(new PointLeaf.Builder(id,this.position,this)).create();
+        wrongArgsAction = builder.accept(new PointLeaf.Builder(id,basePosition + 1,this)).create();
         return this;
 
     }
@@ -61,14 +48,14 @@ public class LeafMap {
     public LeafMap valueWrongArgs(LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
 
         //-1 just ensures that it will be taken without an identifier
-        wrongArgsAction = builder.accept(new ValueLeaf.Builder("ignored",this.position - 1,this)).createNoPut();
+        wrongArgsAction = builder.accept(new ValueLeaf.Builder("ignored",basePosition,this)).create();
         return this;
 
     }
 
-    public LeafMap valueDefaultArgs(LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
+    public LeafMap valueDefaultArgs(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
 
-        wrongArgsAction = builder.accept(new ValueLeaf.Builder("ignored",this.position,this)).create();
+        wrongArgsAction = builder.accept(new ValueLeaf.Builder(id,basePosition + 1,this)).create();
         return this;
 
     }
@@ -78,13 +65,18 @@ public class LeafMap {
         return this;
     }
 
+    public LeafMap withMinArgs(int amount) {
+        this.minArgs = amount;
+        return this;
+    }
+
     public void putInternal(Leaf leaf) {
         actions.computeIfAbsent(leaf.getPosition(), k -> new LinkedHashSet<>()).add(leaf);
     }
 
     public boolean runActionFromArgs(ASenderWrapper sender, String[] args) {
         if (this.maxArgs != null) {
-            if (args.length - 1 > maxArgs) {
+            if (args.length > maxArgs || args.length < minArgs) {
                 wrongArgsAction.getActionHandler(args).run(sender, args);
                 return true;
             }
@@ -100,7 +92,7 @@ public class LeafMap {
             return wrongArgsAction;
         }
 
-        List<Leaf> leaflet = copyPartialMatches(args[0],actions.get(0));
+        List<Leaf> leaflet = copyPartialMatches(args[0],actions.get(Collections.min(actions.keySet())));
 
         if (leaflet.isEmpty()) { return wrongArgsAction; }
         return leaflet.get(0).getPointingLeaf(args);
@@ -108,16 +100,15 @@ public class LeafMap {
 
     public List<String> getTabcomplete(ASenderWrapper sender, String[] args) {
         int currentPosition = args.length - 1;
-        int ahead = this.position + 1;
 
-        List<Leaf> leaflet = copyPartialMatches(args[ahead],actions.get(0));
-        if (currentPosition == ahead) {
+        List<Leaf> leaflet = copyPartialMatches(args[0],actions.get(Objects.requireNonNullElse(Collections.min(this.actions.keySet()),0)));
+        if (currentPosition == 0) {
             return leaflet.stream().map(Leaf::getIdentifier).collect(Collectors.toList());
         } else {
             if (leaflet.isEmpty()) {
                 return new ArrayList<>();
             } else {
-                return leaflet.get(0).getBasedOnPosition(currentPosition,args);
+                return leaflet.get(0).getTabSuggestions(currentPosition,args);
             }
         }
     }
@@ -133,12 +124,5 @@ public class LeafMap {
         return string.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
-    public int getMinArgs() {
-        return Collections.max(actions.keySet()) + 1;
-    }
-
-    public int getMaxArgs() {
-        return 0;
-    }
-
 }
+*/
