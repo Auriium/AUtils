@@ -13,12 +13,14 @@ public class StringArgument implements Argument<String> {
 
     private String identifier;
     private String defaultT;
+    private boolean caseSensitive;
 
     private LinkedHashSet<String> limited;
 
     public StringArgument(String identifier) {
         this.identifier = identifier;
         this.limited = new LinkedHashSet<>();
+        this.caseSensitive = false;
     }
 
     @Override

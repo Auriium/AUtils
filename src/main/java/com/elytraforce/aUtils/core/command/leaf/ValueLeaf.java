@@ -47,6 +47,12 @@ public class ValueLeaf implements ActableLeaf {
 
     @Override
     public ActionHandler getActionHandler(String[] args) {
+        int v = this.position + Collections.max(arguments.values()) + 1; //todo: check the maximum non optional arg
+        if (args.length > v + 1) {
+            //throw new IllegalStateException("Correct attion! lenght = " + args.length + " and v = " + v);
+            return wrongArgsAction.getActionHandler(args);
+        }
+
         Arguments holder = new Arguments();
 
         for (ArgumentWrapperLeaf argument : arguments.keySet()) {

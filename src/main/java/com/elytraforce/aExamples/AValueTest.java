@@ -8,7 +8,7 @@ import com.elytraforce.aUtils.core.command.map.NewLeafMap;
 import java.util.List;
 import java.util.Set;
 
-public class ACommandTest2 extends AMapExecutor {
+public class AValueTest extends AMapExecutor {
 
     public enum Toggle {
         ON,OFF,DEFAULT

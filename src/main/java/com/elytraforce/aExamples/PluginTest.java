@@ -10,8 +10,8 @@ public class PluginTest extends SpigotPlugin {
     @Inject private ALogger logger;
     @Inject private SingletonTest test;
     @Inject private ConfigTest config;
-    @Inject private ACommandTest command;
-    @Inject private ACommandTest2 commandTest2;
+    @Inject private ASplitTest cm;
+    @Inject private AValueTest cm2;
     @Inject private ACommandManager commandManager;
 
     @Override
@@ -39,8 +39,8 @@ public class PluginTest extends SpigotPlugin {
 
             logger.error(config.godIsHere);
 
-            commandManager.registerCommand(command);
-            commandManager.registerCommand(commandTest2);
+            commandManager.registerCommand(cm);
+            commandManager.registerCommand(cm2);
 
 
 

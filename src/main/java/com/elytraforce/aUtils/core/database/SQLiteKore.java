@@ -16,11 +16,11 @@ and mysql, i know jack shit about SQLite.*/
 /**
  * SQLite implementation of a datakore
  */
-public class SQLiteDataKore extends DataKore {
+public class SQLiteKore extends ADataKore {
 
     private final File databaseLocation;
 
-    public SQLiteDataKore(String databaseName, ALogger logger) {
+    public SQLiteKore(String databaseName, ALogger logger) {
         super(databaseName, logger);
 
         databaseLocation = new ASQLiteFile().create(databaseName).getDatabaseLocation();

@@ -76,9 +76,6 @@ public class NewLeafMap {
 
         public Builder(String commandName) {
             this.actions = new LinkedHashMap<>();
-            this.baseAction = this.wrongArgsAction = new PointLeaf.Builder("errorBaseCommand",builderPosition,this).setHandler((sender,args) -> {
-                sender.sendMessage("The developer of this plugin has not set up Leaf Framework correctly! Error: Missing BaseCommand!");
-            }).createNoPut();
             this.noArgs = false;
             this.commandName = commandName;
         }
@@ -100,16 +97,19 @@ public class NewLeafMap {
 
         //there is no need for an id because the first is INSIDE of the command lol
         public Builder basePoint(LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            if (baseAction != null) throw new IllegalStateException("BaseAction for LeafMap " + this.commandName + " already exists!");
             baseAction = builder.accept(new PointLeaf.Builder("ignoredBasePoint",builderPosition,this)).create();
             return this;
         }
 
         public Builder baseSplit(LeafConsumer<SplitLeaf.Builder,SplitLeaf.Builder> builder) {
+            if (baseAction != null) throw new IllegalStateException("BaseAction for LeafMap " + this.commandName + " already exists!");
             baseAction = builder.accept(new SplitLeaf.Builder("ignoredBaseSplit",builderPosition,this)).create();
             return this;
         }
 
         public Builder baseValue(LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
+            if (baseAction != null) throw new IllegalStateException("BaseAction for LeafMap " + this.commandName + " already exists!");
             //using the create method is required as the baseaction's position of -1 is used to define the min arg of 0 by the builder
             baseAction = builder.accept(new ValueLeaf.Builder("ignoredBaseValue",builderPosition,this)).create();
             return this;

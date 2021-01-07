@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ACommandTest extends AMapExecutor {
+public class ASplitTest extends AMapExecutor {
 
     @Inject private ConfigTest config;
     @Inject private ALogger logger;

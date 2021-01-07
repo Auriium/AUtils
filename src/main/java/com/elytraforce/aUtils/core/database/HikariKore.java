@@ -13,12 +13,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Hikari implementation of a datakore
  */
-public class HikariDataKore extends DataKore {
+public class HikariKore extends ADataKore {
 
     private final HikariDataSource source;
     private final ThreadPoolExecutor asyncQueue;
 
-    public HikariDataKore(String databaseName, ALogger logger, HikariConfig config) {
+    public HikariKore(String databaseName, ALogger logger, HikariConfig config) {
         super(databaseName, logger);
 
         int numOfThreads = 5;

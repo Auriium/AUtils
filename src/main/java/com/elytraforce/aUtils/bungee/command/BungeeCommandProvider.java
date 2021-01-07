@@ -19,6 +19,8 @@ public class BungeeCommandProvider extends ACommandManager {
 
     @Override
     public void registerCommand(ACommand command) {
+        verifyCommand(command);
+
         if (this.commands.stream().anyMatch(command1 -> command1.getName().equalsIgnoreCase(command.getName()))) {
             throw new IllegalArgumentException("The commandManager already contains command named " + command.getName());
         }
