@@ -43,19 +43,13 @@ class extends SpigotPlugin {
 for a default plugin showcasing how to use dependency injection with
 aUtils, as well as showcasing some of the features that aUtils has to offer.
 
-- More examples on wiki coming soon!
+https://github.com/Auriium/AUtils/wiki
 
 # Maven integration
 
 C'mon, you should know what to do with these
 
 ```
-    <repository>
-        <id>repsy</id>
-        <name>autils-repo</name>
-        <url>https://repo.repsy.io/mvn/{MY REPSY USERNAME}/{MY REPOSITORY NAME}</url>
-    </repository>
-
     <dependency>
         <groupId>com.elytraforce</groupId>
         <artifactId>aUtils</artifactId>
@@ -63,3 +57,5 @@ C'mon, you should know what to do with these
     </dependency>
 
 ```
+
+you will need to clone it yourself and build it no one wants to host it for me.
