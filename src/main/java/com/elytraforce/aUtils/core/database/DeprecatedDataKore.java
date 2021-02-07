@@ -4,6 +4,7 @@ import com.elytraforce.aUtils.core.logger.ALogger;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -16,33 +17,49 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
+import java.util.concurrent.*;
 
 /**
- * Datakore system with MySQL and SQLite support via a builder.
- * Do not instantiate, please use the builder.
+ * Deprecated old datakore system. DO NOT USE unless you like bugs and no support, in which case go ahead
  */
-public abstract class ADataKore {
+@SuppressWarnings("unused")
+@Deprecated
+public class DeprecatedDataKore {
 
-    protected final ALogger logger;
-    protected final String databaseName;
-    
-    protected ADataKore(String databaseName, ALogger logger) {
-        this.databaseName = databaseName;
+    private final HikariDataSource source;
+    private final long maxBlockTime;
+    private final ThreadPoolExecutor asyncQueue;
+
+    private final ALogger logger;
+
+    private final String databaseName;
+
+    public boolean isClosed() {
+        return source.isClosed();
+    }
+
+    private DeprecatedDataKore(String databaseName, HikariConfig config, ALogger logger) {
         this.logger = logger;
+
+        int numOfThreads = 5;
+        maxBlockTime = 15000L;
+
+        source = new HikariDataSource(config);
+
+        logger.debug("Successfully created a HikariDataSource with the following info: \n"
+                + "Jdbc URL: " + config.getJdbcUrl() + "\n"
+                + "Username: " + config.getUsername() + "\n"
+                + "Password: " + config.getPassword() + "\n"
+                + "Properties: " + config.getDataSourceProperties());
+        asyncQueue = (ThreadPoolExecutor) Executors.newFixedThreadPool(numOfThreads);
+
+        this.databaseName = databaseName;
     }
 
-    abstract Connection getConnection() throws SQLException;
-    public abstract void close();
-
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
+    @Deprecated
     public CompletableFuture<Void> update(String sql, Object... toSet) {
         return CompletableFuture.supplyAsync(() -> {
-            try (Connection connection = getConnection()) {
+            try (Connection connection = source.getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     if (toSet != null) {
                         for (int i = 0; i < toSet.length; i++) {
@@ -58,10 +75,16 @@ public abstract class ADataKore {
         });
     }
 
+    @Deprecated
+    public CompletableFuture<Void> updateMultiple(CompletableFuture<Void>... futures) {
+        return CompletableFuture.allOf(futures);
+    }
+
+    @Deprecated
     public CachedRowSet query(String sql, Object... toSet) throws SQLException{
         CachedRowSet set;
 
-        try(Connection connection = getConnection()) {
+        try(Connection connection = source.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(sql);
             if (toSet != null) {
                 for (int i = 0; i < toSet.length; i++) {
@@ -76,14 +99,28 @@ public abstract class ADataKore {
         return set;
     }
 
-    public int createTableFromFile(String file, Class<?> mainClass) throws SQLException, IOException {
+    @Deprecated
+    public void close() {
+        asyncQueue.shutdown();
+        try {
+            asyncQueue.awaitTermination(maxBlockTime, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        source.close();
+    }
+
+    @Deprecated
+    public int createTableFromFile(String file, Class<?> mainClass) throws IOException, SQLException {
         URL resource = Resources.getResource(mainClass, "/" + file);
         String databaseStructure = Resources.toString(resource, Charsets.UTF_8);
         logger.debug("(Create Table) Successfully loaded an SQL statement from the " + file + " file.");
         return createTableFromStatement(databaseStructure);
     }
+
+    @Deprecated
     public int createTableFromStatement(String sql) throws SQLException {
-        try (Connection connection = getConnection()) {
+        try (Connection connection = source.getConnection()) {
             logger.debug("(Create Table) Successfully got a new connection from hikari: " + connection.toString() + ", catalog: " + connection.getCatalog());
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 logger.debug("(Create Table) Successfully created a PreparedStatement. Executing the following: " + sql);
@@ -91,9 +128,11 @@ public abstract class ADataKore {
             }
         }
     }
-    public void createTableFromSchema(String file) throws SQLException {
-        try (final Connection connection = getConnection()) {
-            String beginning = "USE " + getDatabaseName() + ";";
+
+    @Deprecated
+    public void createTablesFromSchema(String file, Class<?> mainClass) throws IOException, SQLException{
+        try (final Connection connection = this.source.getConnection()) {
+            String beginning = "USE " + this.databaseName + ";";
             InputStream databaseSchema = DeprecatedDataKore.class.getResourceAsStream(file);
             List<InputStream> streams = Arrays.asList(
                     new ByteArrayInputStream(beginning.getBytes()),
@@ -106,6 +145,7 @@ public abstract class ADataKore {
         }
     }
 
+    @Deprecated
     public static class Builder {
 
         private String pluginName;
@@ -165,17 +205,12 @@ public abstract class ADataKore {
             return this;
         }
 
-        public Builder useSQLite(Boolean b) {
-            this.useSQLite = b;
-            return this;
-        }
-
-        public ADataKore build() {
-
+        public DeprecatedDataKore build() {
+            HikariConfig config = new HikariConfig();
             if (useSQLite) {
-                return new SQLiteKore(this.name,this.logger);
-            } else {
-                HikariConfig config = new HikariConfig();
+                config.setDataSourceClassName("org.sqlite.SQLiteDataSource");
+                config.addDataSourceProperty("url","jdbc:");
+            }
                 config.setJdbcUrl(String.format(useSSL ? "jdbc:mysql://%s:%d/%s" : "jdbc:mysql://%s:%d/%s?useSSL=false",
                         host,
                         port,
@@ -194,11 +229,12 @@ public abstract class ADataKore {
                 config.addDataSourceProperty("cacheServerConfiguration", true);
                 config.addDataSourceProperty("elideSetAutoCommit", true);
                 config.addDataSourceProperty("maintainTimeStats", false);
-                return new HikariKore(this.name,this.logger,config);
-            }
 
 
+
+            return new DeprecatedDataKore(name,config,logger);
         }
-    }
 
+    }
 }
+

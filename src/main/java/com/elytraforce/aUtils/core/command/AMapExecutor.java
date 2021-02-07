@@ -1,9 +1,13 @@
 package com.elytraforce.aUtils.core.command;
 
-import com.elytraforce.aUtils.core.command.map.LeafMap;
+import com.elytraforce.aUtils.core.command.map.NewLeafMap;
 
 import java.util.List;
 
+/**
+ * An AbstractCommandExecutor that consumes LeafMaps from Leaf Framework.
+ * Extend this if you are trying to make a command with Leaf
+ */
 public abstract class AMapExecutor extends ACommandExecutor {
 
     @Override
@@ -13,14 +17,14 @@ public abstract class AMapExecutor extends ACommandExecutor {
 
     @Override
     public List<String> onTabComplete(ASenderWrapper sender, String[] args) {
-        return onCommandMap().getTabcomplete(sender, args);
+        return onCommandMap().getTabComplete(args);
     }
 
     @Override
     public boolean onCommand(ASenderWrapper sender, String[] args) {
-        return onCommandMap().runActionFromArgs(sender, args);
+        return onCommandMap().runPointingLeaf(sender,args);
     }
 
-    public abstract LeafMap onCommandMap();
+    public abstract NewLeafMap onCommandMap();
 
 }

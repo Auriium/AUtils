@@ -1,21 +1,26 @@
 package com.elytraforce.aUtils.core.command.leaf;
 
-import com.elytraforce.aUtils.core.command.map.LeafMap;
-import com.elytraforce.aUtils.core.command.model.ActablePointLeaf;
+import com.elytraforce.aUtils.core.command.map.NewLeafMap;
+import com.elytraforce.aUtils.core.command.model.ActableLeaf;
 import com.elytraforce.aUtils.core.command.model.Leaf;
 import com.elytraforce.aUtils.core.command.model.LeafConsumer;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a {@link Leaf} that provides passthrough to one or more leaves connected to it via point, split, and value methods
+ * These methods are identical to that of {@link NewLeafMap}'s and register themselves onto the map unless otherwise specified.
+ * This leaf is what allows complex subcommand routes.
+ */
 public class SplitLeaf implements Leaf {
 
     private final int position;
     private final String identifier;
     private final LinkedHashSet<Leaf> subset;
-    private final PointLeaf wrongArgsAction;
+    private final ActableLeaf wrongArgsAction;
 
-    private SplitLeaf(int position, String identifier, LinkedHashSet<Leaf> subset, PointLeaf wrongArgsAction) {
+    private SplitLeaf(int position, String identifier, LinkedHashSet<Leaf> subset, ActableLeaf wrongArgsAction) {
         this.identifier = identifier;
         this.position = position;
         this.subset = subset;
@@ -23,7 +28,17 @@ public class SplitLeaf implements Leaf {
     }
 
     @Override
-    public ActablePointLeaf getPointingLeaf(String[] args) {
+    public String getIdentifier() {
+        return this.identifier;
+    }
+
+    @Override
+    public Integer getPosition() {
+        return position;
+    }
+
+    @Override
+    public ActableLeaf getPointingLeaf(String[] args) {
         if (args.length < position + 2) {
             return wrongArgsAction;
         }
@@ -35,7 +50,14 @@ public class SplitLeaf implements Leaf {
     }
 
     @Override
-    public List<String> getBasedOnPosition(int position, String[] stringArray) {
+    public List<String> getDefaultUsage() {
+        return this.subset.stream()
+                .flatMap(leaf -> leaf.getDefaultUsage().stream())
+                .map(string -> string = this.identifier + "&b " + string).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getTabSuggestions(int position, String[] stringArray) {
         int ahead = this.position + 1;
         List<Leaf> leaflet = copyPartialMatches(stringArray[ahead],subset);
         //if we are ONE AHEAD of the position this thing is at 2 <= 1
@@ -45,19 +67,9 @@ public class SplitLeaf implements Leaf {
             if (leaflet.isEmpty()) {
                 return new ArrayList<>();
             } else {
-                return leaflet.get(0).getBasedOnPosition(position,stringArray);
+                return leaflet.get(0).getTabSuggestions(position,stringArray);
             }
         }
-    }
-
-    @Override
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
-    public Integer getPosition() {
-        return position;
     }
 
     private List<Leaf> copyPartialMatches(final String token, final Collection<Leaf> originals) throws UnsupportedOperationException, IllegalArgumentException {
@@ -76,11 +88,11 @@ public class SplitLeaf implements Leaf {
         private final int position;
 
         private final String identifier;
-        private final LeafMap builderMap;
+        private final NewLeafMap.Builder builderMap;
         private final LinkedHashSet<Leaf> subset;
-        private PointLeaf wrongArgsAction;
+        private ActableLeaf wrongArgsAction;
 
-        public Builder(String id, int superpos, LeafMap map) {
+        public Builder(String id, int superpos, NewLeafMap.Builder map) {
             this.position = superpos + 1;
             this.builderMap = map;
             this.identifier = id;
@@ -90,38 +102,38 @@ public class SplitLeaf implements Leaf {
                     .create();
         }
 
-        public Builder point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-            Leaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap));
+        public SplitLeaf.Builder point(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            Leaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap)).create();
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Builder split(String id, LeafConsumer<Builder,SplitLeaf> builder) {
-            Leaf leaf = builder.accept(new Builder(id,position,builderMap));
+        public SplitLeaf.Builder split(String id, LeafConsumer<Builder,SplitLeaf.Builder> builder) {
+            Leaf leaf = builder.accept(new Builder(id,position,builderMap)).create();
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Builder value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf> builder) {
-            Leaf leaf = builder.accept(new ValueLeaf.Builder(id,position,builderMap));
+        public SplitLeaf.Builder value(String id, LeafConsumer<ValueLeaf.Builder,ValueLeaf.Builder> builder) {
+            Leaf leaf = builder.accept(new ValueLeaf.Builder(id,position,builderMap)).create();
 
             this.subset.add(leaf);
 
             return this;
         }
 
-        public Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap));
+        public SplitLeaf.Builder pointWrongArgs(LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            wrongArgsAction = builder.accept(new PointLeaf.Builder("ignored",position,builderMap)).createNoPut();
 
             return this;
         }
 
-        public Builder pointDefaultArgs(String id, LeafConsumer<PointLeaf.Builder,PointLeaf> builder) {
-            PointLeaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap));
+        public SplitLeaf.Builder pointDefaultArgs(String id, LeafConsumer<PointLeaf.Builder,PointLeaf.Builder> builder) {
+            PointLeaf leaf = builder.accept(new PointLeaf.Builder(id,position,builderMap)).create();
 
             wrongArgsAction = leaf;
             this.subset.add(leaf);

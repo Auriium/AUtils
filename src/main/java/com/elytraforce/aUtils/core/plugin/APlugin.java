@@ -4,6 +4,8 @@ import java.io.File;
 
 /**
  * Interface representing and wrapping a plugin
+ *
+ * Implemented by {@see SpigotPlugin} and {@see BungeePlugin}
  * @param <T> represents the plugin being wrapped
  */
 public interface APlugin<T> {

@@ -36,11 +36,13 @@
                             <pattern>com.zaxxer.hikari</pattern>
                             <shadedPattern>${project.groupId}.libs.hikari</shadedPattern>
                         </relocation>
-                        <relocation>
-                            <pattern>org.mybatis</pattern>
-                            <shadedPattern>${project.groupId}.libs.ibatis</shadedPattern>
-                        </relocation>
                     </relocations>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>META-INF/services/java.sql.Driver</resource>
+                        </transformer>
+                    </transformers>
                 </configuration>
             </plugin>
         </plugins>
@@ -98,6 +100,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.34.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
@@ -107,6 +114,7 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>5.0.0-BETA-1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

@@ -10,7 +10,7 @@ public interface ACommand {
 
     //this implements ACommand
     public String getName();
-    public ArrayList<String> getAliases();
+    public List<String> getAliases();
     public String getPermission();
     public String getUsage();
     public String getDescription();

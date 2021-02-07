@@ -17,5 +17,17 @@ public class Arguments {
         return (String) container.get(identifier);
     }
 
+    public boolean getBoolean(String identifier) {
+        return (Boolean) container.get(identifier);
+    }
+
+    public int getInteger(String identifier) {
+        return (int) container.get(identifier);
+    }
+
+    public Enum getEnum(String identifier) {
+        return (Enum) container.get(identifier);
+    }
+
 
 }
