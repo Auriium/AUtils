@@ -47,7 +47,7 @@ https://github.com/Auriium/AUtils/wiki
 
 # Maven integration
 
-C'mon, you should know what to do with these
+C'mon, you should know what to do with these (Add dependency to dependencyManagement, repository to repositories)
 
 ```
     <dependency>
@@ -56,6 +56,11 @@ C'mon, you should know what to do with these
         <version>2.1-SNAPSHOT</version>
     </dependency>
 
+    <repository>
+        <id>repsy</id>
+        <url>https://repo.repsy.io/mvn/elytraforce/default</url>
+    </repository>
+
 ```
 
-you will need to clone it yourself and build it no one wants to host it for me.
+
