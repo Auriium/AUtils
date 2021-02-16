@@ -12,6 +12,6 @@ public class ConfigTest extends AConfig {
         return "cheeseman.yml";
     }
 
-    @AField(location="mysql.sex_hole")
+    @AField(location="mysql.value")
     public String godIsHere = "default value";
 }
