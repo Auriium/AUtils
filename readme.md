@@ -1,3 +1,7 @@
+# Deprecated
+- This codebase is no longer an accurate representation of my code. The server it is for is dead and the code has been deprecated and open-sourced.
+- It is highly advisable that you do not use this code anywhere.
+
 # AUtils
 
 Powerful utilities for plugin makers who aren't defined by the type of server
